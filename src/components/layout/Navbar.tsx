@@ -26,7 +26,7 @@ export function Navbar() {
           <span className="text-accent">AI</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 md:flex">
+        <nav className="hidden items-center gap-8 lg:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.key}
@@ -38,7 +38,7 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <LocaleToggle />
           <Button href="/#products" variant="primary" className="px-5 py-2.5 text-sm">
             {t("tryTool")}
@@ -48,7 +48,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-ink md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-ink lg:hidden"
           aria-label={isOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={isOpen}
         >

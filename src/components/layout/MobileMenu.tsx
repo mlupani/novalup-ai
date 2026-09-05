@@ -11,7 +11,7 @@ export function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
   const t = useTranslations("nav");
 
   return (
-    <div className="border-t border-neutral-200 bg-paper md:hidden">
+    <div className="border-t border-neutral-200 bg-paper lg:hidden">
       <Container className="flex flex-col gap-6 py-6">
         <nav className="flex flex-col gap-4">
           {NAV_LINKS.map((link) => (
