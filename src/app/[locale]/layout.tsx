@@ -42,11 +42,13 @@ export async function generateMetadata({
       siteName: "Novalup AI",
       locale: locale === "es" ? "es_AR" : "en_US",
       type: "website",
+      images: ["/opengraph-image"],
     },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
+      images: ["/opengraph-image"],
     },
   };
 }
