@@ -1,0 +1,114 @@
+{
+  "nav": {
+    "products": "Products",
+    "howItWorks": "How it works",
+    "about": "About Novalup AI",
+    "tryTool": "Try a tool",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "hero": {
+    "headline": "AI tools that actually do something.",
+    "subheadline": "Simple AI-powered tools designed to solve real problems in seconds.",
+    "ctaPrimary": "Explore tools",
+    "ctaSecondary": "Try for free"
+  },
+  "products": {
+    "heading": "Tools built to solve real problems.",
+    "subheading": "Explore our growing collection of AI-powered tools.",
+    "statusAvailable": "Available",
+    "statusComingSoon": "Coming soon",
+    "items": {
+      "product-photos": {
+        "name": "AI Product Photos",
+        "description": "Turn ordinary product photos into professional images with AI.",
+        "cta": "Try Product Photos"
+      },
+      "cv-analyzer": {
+        "name": "AI CV Analyzer",
+        "description": "Analyze your CV, discover weaknesses and improve your chances of getting interviews.",
+        "cta": "Try CV Analyzer"
+      },
+      "study-assistant": {
+        "name": "AI Study Assistant",
+        "description": "Turn your notes into summaries, flashcards and practice exams.",
+        "cta": "Try Study Assistant"
+      },
+      "interview-simulator": {
+        "name": "AI Interview Simulator",
+        "description": "Practice realistic job interviews and get instant feedback.",
+        "cta": "Try Interview Simulator"
+      },
+      "trading-analytics": {
+        "name": "Trading Analytics",
+        "description": "Analyze your trading history and discover patterns in your performance.",
+        "cta": "Try Trading Analytics"
+      }
+    }
+  },
+  "featuredProduct": {
+    "eyebrow": "Featured tool",
+    "heading": "AI Product Photos",
+    "beforeLabel": "Before",
+    "afterLabel": "After",
+    "step1": "Upload a product photo.",
+    "step2": "Choose a style.",
+    "step3": "Generate a professional image.",
+    "cta": "Try it free"
+  },
+  "howItWorks": {
+    "heading": "How it works",
+    "step1Title": "Choose a tool",
+    "step1Body": "Pick the AI tool you need.",
+    "step2Title": "Upload or describe",
+    "step2Body": "Give the tool the information it needs.",
+    "step3Title": "Get your result",
+    "step3Body": "Generate your result in seconds.",
+    "step4Title": "Keep creating",
+    "step4Body": "Use more tools whenever you need them."
+  },
+  "freeUsage": {
+    "heading": "Try before you pay.",
+    "body": "Every Novalup AI tool includes free usage so you can see the result before purchasing more generations."
+  },
+  "about": {
+    "heading": "About Novalup AI",
+    "body": "Novalup AI is a growing collection of practical AI tools built to make everyday tasks faster, easier and more accessible."
+  },
+  "finalCta": {
+    "heading": "Find a tool. Try it. Get something done.",
+    "subheading": "Explore Novalup AI and start creating.",
+    "cta": "Explore tools"
+  },
+  "footer": {
+    "products": "Products",
+    "about": "About",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "partOf": "Part of Novalup."
+  },
+  "placeholder": {
+    "badge": "Coming very soon",
+    "backHome": "Back to home",
+    "toolMessage": "This tool is being built. You'll be able to use it here very soon."
+  },
+  "legal": {
+    "terms": {
+      "name": "Terms & conditions",
+      "message": "We're putting this page together. Check back soon."
+    },
+    "privacy": {
+      "name": "Privacy policy",
+      "message": "We're putting this page together. Check back soon."
+    },
+    "contact": {
+      "name": "Contact",
+      "message": "We're putting this page together. Check back soon."
+    }
+  },
+  "metadata": {
+    "title": "Novalup AI — AI Tools That Actually Do Something",
+    "description": "Practical AI tools for work, creativity, learning and everyday tasks."
+  }
+}
