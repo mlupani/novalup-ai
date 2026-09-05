@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo";
+import { Navbar } from "@/components/layout/Navbar";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -59,7 +60,10 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale} className={inter.variable}>
       <body className="bg-paper font-sans text-ink antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <Navbar />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );
