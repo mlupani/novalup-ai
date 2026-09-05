@@ -32,16 +32,18 @@ function ProductSilhouette({ tone }: { tone: "before" | "after" }) {
         rx="6"
         fill={isAfter ? "#be123c" : "#8A8A8E"}
       />
-      <defs>
-        <linearGradient id="bottle-after" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#fb7185" />
-          <stop offset="100%" stopColor="#e11d48" />
-        </linearGradient>
-        <radialGradient id="shadow-after">
-          <stop offset="0%" stopColor="#e11d4855" />
-          <stop offset="100%" stopColor="#e11d4800" />
-        </radialGradient>
-      </defs>
+      {isAfter && (
+        <defs>
+          <linearGradient id="bottle-after" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#fb7185" />
+            <stop offset="100%" stopColor="#e11d48" />
+          </linearGradient>
+          <radialGradient id="shadow-after">
+            <stop offset="0%" stopColor="#e11d4855" />
+            <stop offset="100%" stopColor="#e11d4800" />
+          </radialGradient>
+        </defs>
+      )}
     </svg>
   );
 }
@@ -74,9 +76,9 @@ export function FeaturedProduct() {
           </Button>
         </RevealOnScroll>
 
-        <RevealOnScroll className="order-1 flex items-center justify-center gap-6 lg:order-2">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex h-56 w-44 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-100 shadow-sm md:h-64 md:w-52">
+        <RevealOnScroll className="order-1 flex items-center justify-center gap-3 sm:gap-6 lg:order-2">
+          <div className="flex min-w-0 flex-col items-center gap-3">
+            <div className="flex h-56 w-full max-w-44 items-center justify-center rounded-2xl border border-neutral-200 bg-neutral-100 shadow-sm md:h-64 md:w-52">
               <ProductSilhouette tone="before" />
             </div>
             <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
@@ -86,8 +88,8 @@ export function FeaturedProduct() {
 
           <ArrowRight className="hidden h-6 w-6 flex-shrink-0 text-accent md:block" />
 
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex h-56 w-44 items-center justify-center rounded-2xl bg-white shadow-[0_24px_48px_-16px_rgba(225,29,72,0.25)] md:h-64 md:w-52">
+          <div className="flex min-w-0 flex-col items-center gap-3">
+            <div className="flex h-56 w-full max-w-44 items-center justify-center rounded-2xl bg-white shadow-[0_24px_48px_-16px_rgba(225,29,72,0.25)] md:h-64 md:w-52">
               <ProductSilhouette tone="after" />
             </div>
             <span className="text-xs font-semibold uppercase tracking-wide text-accent-dark">

@@ -1,4 +1,4 @@
-export const SITE_NAME = "Novalup AI";
+export const SITE_URL = "https://novalup.ai";
 
 export const NAV_LINKS = [
   { key: "products", href: "/#products" },

@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={product.href}
-      className="group flex flex-col gap-5 rounded-2xl border border-neutral-200 bg-white p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_16px_32px_-16px_rgba(0,0,0,0.15)]"
+      className="group flex h-full flex-col gap-5 rounded-2xl border border-neutral-200 bg-white p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_16px_32px_-16px_rgba(0,0,0,0.15)]"
     >
       <div className="flex items-center justify-between">
         <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-paper-alt text-ink">

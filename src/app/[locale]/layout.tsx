@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo";
+import { SITE_URL } from "@/lib/constants";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
@@ -29,7 +30,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "metadata" });
 
   return {
-    metadataBase: new URL("https://novalup.ai"),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: t("title"),
       template: "%s — Novalup AI",
@@ -42,13 +43,13 @@ export async function generateMetadata({
       siteName: "Novalup AI",
       locale: locale === "es" ? "es_AR" : "en_US",
       type: "website",
-      images: ["/opengraph-image"],
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Novalup AI" }],
     },
     twitter: {
       card: "summary_large_image",
       title: t("title"),
       description: t("description"),
-      images: ["/opengraph-image"],
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Novalup AI" }],
     },
   };
 }
@@ -63,9 +64,12 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale} className={inter.variable}>
       <body className="bg-paper font-sans text-ink antialiased">
+        <noscript>
+          <style>{`.reveal-on-scroll{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <NextIntlClientProvider>
           <Navbar />
-          {children}
+          <main>{children}</main>
           <Footer />
         </NextIntlClientProvider>
       </body>

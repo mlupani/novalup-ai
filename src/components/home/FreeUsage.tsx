@@ -13,7 +13,7 @@ export function FreeUsage() {
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-accent shadow-sm">
             <BadgeCheck size={22} />
           </span>
-          <h2 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl md:text-5xl">
             {t("heading")}
           </h2>
           <p className="text-lg text-neutral-600">{t("body")}</p>

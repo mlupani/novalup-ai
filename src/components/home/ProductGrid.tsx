@@ -14,7 +14,7 @@ export function ProductGrid() {
         <SectionHeading heading={t("heading")} subheading={t("subheading")} />
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product, index) => (
-            <RevealOnScroll key={product.slug} delayMs={index * 80}>
+            <RevealOnScroll key={product.slug} delayMs={index * 80} className="h-full">
               <ProductCard product={product} />
             </RevealOnScroll>
           ))}

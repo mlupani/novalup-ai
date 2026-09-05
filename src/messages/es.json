@@ -5,7 +5,9 @@
     "about": "Sobre Novalup AI",
     "tryTool": "Probar una herramienta",
     "openMenu": "Abrir menú",
-    "closeMenu": "Cerrar menú"
+    "closeMenu": "Cerrar menú",
+    "localeEs": "Español",
+    "localeEn": "English"
   },
   "hero": {
     "headline": "Herramientas de IA que realmente hacen algo.",

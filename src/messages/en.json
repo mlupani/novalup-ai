@@ -5,7 +5,9 @@
     "about": "About Novalup AI",
     "tryTool": "Try a tool",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "localeEs": "Español",
+    "localeEn": "English"
   },
   "hero": {
     "headline": "AI tools that actually do something.",

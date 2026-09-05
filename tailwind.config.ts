@@ -6,7 +6,6 @@ const config: Config = {
     extend: {
       colors: {
         ink: "#0B0B0D",
-        night: "#111111",
         "night-card": "#18181B",
         paper: "#FAFAFA",
         "paper-alt": "#F3F3F5",

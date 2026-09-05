@@ -106,7 +106,7 @@ function AnalyticsCard({ className = "" }: { className?: string }) {
 export function HeroMockups() {
   return (
     <>
-      <div className="relative mx-auto hidden h-72 max-w-4xl lg:block">
+      <div className="relative mx-auto hidden h-72 max-w-4xl lg:block" aria-hidden="true">
         <CvScoreCard className="absolute left-0 top-4 [animation-delay:0s]" />
         <BeforeAfterCard className="absolute left-[22%] top-32 [animation-delay:1.2s]" />
         <FlashcardCard className="absolute left-1/2 top-0 -translate-x-1/2 [animation-delay:0.6s]" />
@@ -114,7 +114,7 @@ export function HeroMockups() {
         <AnalyticsCard className="absolute right-0 top-4 [animation-delay:2.4s]" />
       </div>
 
-      <div className="mx-auto flex scale-90 items-start justify-center gap-3 lg:hidden">
+      <div className="mx-auto flex scale-90 items-start justify-center gap-3 lg:hidden" aria-hidden="true">
         <BeforeAfterCard className="[animation-delay:0s]" />
         <CvScoreCard className="[animation-delay:0.8s]" />
       </div>
