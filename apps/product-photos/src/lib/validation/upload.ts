@@ -1,0 +1,12 @@
+export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+export const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_MB ?? 10) * 1024 * 1024;
+
+export function assertValidImage(file: { type: string; size: number }):
+  | { ok: true }
+  | { ok: false; reason: "type" | "size" } {
+  if (!(ALLOWED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
+    return { ok: false, reason: "type" };
+  }
+  if (file.size > MAX_UPLOAD_BYTES) return { ok: false, reason: "size" };
+  return { ok: true };
+}
