@@ -26,6 +26,8 @@ const baseArgs = {
 
 beforeEach(() => {
   Object.values(generation).forEach((f) => f.mockReset());
+  storage.put.mockReset();
+  storage.put.mockResolvedValue({ url: "k" });
   generation.findFirst.mockResolvedValue(null);
   generation.create.mockResolvedValue({ id: "g1" });
   generation.update.mockResolvedValue({});

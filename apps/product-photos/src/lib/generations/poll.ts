@@ -31,8 +31,8 @@ export async function pollGeneration(args: { userId: string; id: string }): Prom
   if (job.status === "pending") return { status: "pending" };
 
   if (job.status === "failed") {
-    await prisma.generation.update({
-      where: { id },
+    await prisma.generation.updateMany({
+      where: { id, status: "pending" },
       data: { status: "failed", error: job.error },
     });
     return { status: "failed", error: job.error };
@@ -46,9 +46,13 @@ export async function pollGeneration(args: { userId: string; id: string }): Prom
 
   const generatedImageUrl = mediaApiUrl(id, "generated");
   await prisma.$transaction(async (tx) => {
-    const fresh = await tx.generation.findUnique({ where: { id }, select: { status: true } });
-    if (fresh?.status !== "pending") return;
-    await tx.generation.update({ where: { id }, data: { status: "completed", generatedImageUrl } });
+    const claimed = await tx.generation.updateMany({
+      where: { id, status: "pending" },
+      data: { status: "completed", generatedImageUrl },
+    });
+    if (claimed.count !== 1) return; // lost the race / already completed
+    // consumeOneCredit may return 0 in a rare race where credits were exhausted concurrently;
+    // we still deliver the completed generation as the image exists (design §6)
     await consumeOneCredit(tx, userId);
   });
 
