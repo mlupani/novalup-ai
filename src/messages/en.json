@@ -11,9 +11,13 @@
   },
   "hero": {
     "headline": "AI tools that actually do something.",
-    "subheadline": "Simple AI-powered tools designed to solve real problems in seconds.",
+    "subheadline": "Simple AI-powered tools built to solve real-world tasks in seconds.",
     "ctaPrimary": "Explore tools",
     "ctaSecondary": "Try for free"
+  },
+  "statement": {
+    "strong": "Built for real tasks.",
+    "rest": "Not AI demos."
   },
   "products": {
     "heading": "Tools built to solve real problems.",
@@ -48,39 +52,47 @@
       }
     }
   },
-  "featuredProduct": {
+  "showcase": {
     "eyebrow": "Featured tool",
-    "heading": "AI Product Photos",
-    "beforeLabel": "Before",
-    "afterLabel": "After",
-    "beforeAlt": "Casual smartphone photo of a pair of headphones on a table.",
-    "afterAlt": "Professional photo of the same headphones on a white studio background.",
-    "step1": "Upload a product photo.",
-    "step2": "Choose a style.",
-    "step3": "Generate a set of professional images.",
-    "cta": "Try it free"
+    "heading": "Turn a product photo into marketing content.",
+    "subheading": "Upload your product and let AI create professional visuals ready to use.",
+    "cta": "Try Product Photos",
+    "ui": {
+      "window": "Novalup AI · Product Photos",
+      "original": "Original",
+      "style": "Style",
+      "styleStudio": "Studio",
+      "styleWhite": "White background",
+      "styleLifestyle": "Lifestyle",
+      "generate": "Generate",
+      "aiGenerated": "AI Generated",
+      "results": "Results"
+    }
   },
   "howItWorks": {
     "heading": "How it works",
+    "subheading": "Three steps, no learning curve.",
     "step1Title": "Choose a tool",
-    "step1Body": "Pick the AI tool you need.",
+    "step1Body": "Open the AI tool you need.",
+    "step1Visual": "Product Photos",
     "step2Title": "Upload or describe",
-    "step2Body": "Give the tool the information it needs.",
+    "step2Body": "Give the tool the information it will work with.",
+    "step2Visual": "Upload image",
     "step3Title": "Get your result",
-    "step3Body": "Generate your result in seconds.",
-    "step4Title": "Keep creating",
-    "step4Body": "Use more tools whenever you need them."
+    "step3Body": "Get a set of professional results in seconds.",
+    "step3Visual": "Ready"
   },
   "freeUsage": {
-    "heading": "Try before you pay.",
-    "body": "Every Novalup AI tool includes free usage so you can see the result before purchasing more generations."
+    "heading": "Try it before you pay.",
+    "body": "Every Novalup AI tool includes a free experience so you can see the result before committing.",
+    "cta": "Explore tools"
   },
   "about": {
-    "heading": "About Novalup AI",
-    "body": "Novalup AI is a growing collection of practical AI tools built to make everyday tasks faster, easier and more accessible."
+    "heading": "AI tools built around real problems.",
+    "body": "Novalup AI is a growing collection of practical AI tools designed to make everyday tasks faster, simpler and more accessible."
   },
   "finalCta": {
-    "heading": "Find a tool. Try it. Get something done.",
+    "heading": "Find a tool. Create something useful.",
     "subheading": "Explore Novalup AI and start creating.",
     "cta": "Explore tools"
   },

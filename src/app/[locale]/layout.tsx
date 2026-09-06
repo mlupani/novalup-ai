@@ -63,7 +63,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html lang={locale} className={inter.variable}>
-      <body className="bg-paper font-sans text-ink antialiased">
+      <body className="bg-night font-sans text-white antialiased">
         <noscript>
           <style>{`.reveal-on-scroll{opacity:1!important;transform:none!important}`}</style>
         </noscript>

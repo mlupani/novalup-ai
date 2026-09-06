@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { Hero } from "@/components/home/Hero";
+import { StatementStrip } from "@/components/home/StatementStrip";
 import { ProductGrid } from "@/components/home/ProductGrid";
-// import { FeaturedProduct } from "@/components/home/FeaturedProduct"; // temporarily hidden, see below
+import { ProductShowcase } from "@/components/home/ProductShowcase";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { FreeUsage } from "@/components/home/FreeUsage";
 import { About } from "@/components/home/About";
@@ -29,8 +30,9 @@ export default async function HomePage({ params }: Props) {
   return (
     <>
       <Hero />
+      <StatementStrip />
       <ProductGrid />
-      {/* FeaturedProduct temporarily hidden at the user's request — re-enable when ready. */}
+      <ProductShowcase />
       <HowItWorks />
       <FreeUsage />
       <About />

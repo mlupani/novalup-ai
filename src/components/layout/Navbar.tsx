@@ -15,15 +15,15 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-neutral-200/70 bg-paper/80 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-night/80 backdrop-blur-xl">
       <Container className="flex h-16 items-center justify-between">
         <Link
           href="/"
           onClick={() => setIsOpen(false)}
           className="flex items-center gap-1 text-lg font-bold tracking-tight"
         >
-          <span className="text-ink">Novalup</span>
-          <span className="text-accent">AI</span>
+          <span className="text-white">Novalup</span>
+          <span className="text-accent-light">AI</span>
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">
@@ -31,7 +31,7 @@ export function Navbar() {
             <Link
               key={link.key}
               href={link.href}
-              className="text-sm font-medium text-neutral-600 transition-colors hover:text-ink"
+              className="text-sm font-medium text-neutral-400 transition-colors hover:text-white"
             >
               {t(link.key)}
             </Link>
@@ -48,7 +48,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-ink lg:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/[0.06] lg:hidden"
           aria-label={isOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={isOpen}
         >

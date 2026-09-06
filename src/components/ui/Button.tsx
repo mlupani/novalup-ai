@@ -1,18 +1,17 @@
 import { Link } from "@/i18n/navigation";
 
-type Variant = "primary" | "secondary" | "secondary-dark" | "text";
+type Variant = "primary" | "secondary" | "ghost" | "text";
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 ease-out";
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-night";
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    "bg-gradient-to-br from-accent to-accent-dark text-white shadow-[0_8px_24px_-8px_rgba(225,29,72,0.5)] hover:shadow-[0_10px_28px_-6px_rgba(225,29,72,0.6)] hover:-translate-y-0.5",
+    "bg-accent text-white shadow-[0_8px_28px_-10px_rgba(225,29,72,0.8)] hover:bg-accent-dark hover:shadow-[0_12px_32px_-8px_rgba(225,29,72,0.9)] hover:-translate-y-0.5",
   secondary:
-    "border border-neutral-300 text-ink hover:border-ink hover:-translate-y-0.5",
-  "secondary-dark":
-    "border border-white/30 text-white hover:border-white hover:-translate-y-0.5",
-  text: "px-0 py-0 text-ink underline-offset-4 hover:underline",
+    "border border-white/15 bg-white/[0.03] text-white hover:border-white/30 hover:bg-white/[0.06] hover:-translate-y-0.5",
+  ghost: "text-neutral-300 hover:text-white",
+  text: "px-0 py-0 text-white underline-offset-4 hover:underline",
 };
 
 interface ButtonProps {

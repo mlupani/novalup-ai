@@ -36,7 +36,7 @@ export function LocaleToggle() {
     <button
       type="button"
       onClick={() => router.replace(pathname, { locale: nextLocale })}
-      className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-neutral-300 transition-colors hover:border-ink"
+      className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-white/15 transition-colors hover:border-white/40"
       aria-label={`Switch to ${nextLabel}`}
       title={nextLabel}
     >

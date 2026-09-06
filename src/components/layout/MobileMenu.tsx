@@ -11,7 +11,7 @@ export function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
   const t = useTranslations("nav");
 
   return (
-    <div className="border-t border-neutral-200 bg-paper lg:hidden">
+    <div className="border-t border-white/[0.06] bg-night lg:hidden">
       <Container className="flex flex-col gap-6 py-6">
         <nav className="flex flex-col gap-4">
           {NAV_LINKS.map((link) => (
@@ -19,7 +19,7 @@ export function MobileMenu({ onNavigate }: { onNavigate: () => void }) {
               key={link.key}
               href={link.href}
               onClick={onNavigate}
-              className="text-base font-medium text-ink"
+              className="text-base font-medium text-neutral-200 transition-colors hover:text-white"
             >
               {t(link.key)}
             </Link>

@@ -11,9 +11,13 @@
   },
   "hero": {
     "headline": "Herramientas de IA que realmente hacen algo.",
-    "subheadline": "Herramientas simples con inteligencia artificial, pensadas para resolver problemas reales en segundos.",
+    "subheadline": "Herramientas simples con inteligencia artificial, creadas para resolver tareas reales en segundos.",
     "ctaPrimary": "Explorar herramientas",
     "ctaSecondary": "Probar gratis"
+  },
+  "statement": {
+    "strong": "Hechas para tareas reales.",
+    "rest": "No para demos de IA."
   },
   "products": {
     "heading": "Herramientas creadas para resolver problemas reales.",
@@ -48,39 +52,47 @@
       }
     }
   },
-  "featuredProduct": {
+  "showcase": {
     "eyebrow": "Herramienta destacada",
-    "heading": "Fotos de Producto con IA",
-    "beforeLabel": "Antes",
-    "afterLabel": "Después",
-    "beforeAlt": "Foto casera de unos auriculares sobre una mesa, sacada con el celular.",
-    "afterAlt": "Foto profesional de los mismos auriculares, con fondo blanco de estudio.",
-    "step1": "Subí una foto de tu producto.",
-    "step2": "Elegí un estilo.",
-    "step3": "Generá un conjunto de imágenes profesionales.",
-    "cta": "Probar gratis"
+    "heading": "Convertí la foto de tu producto en contenido para vender.",
+    "subheading": "Subí tu producto y dejá que la IA genere imágenes profesionales listas para usar.",
+    "cta": "Probar Fotos de Producto",
+    "ui": {
+      "window": "Novalup AI · Fotos de Producto",
+      "original": "Original",
+      "style": "Estilo",
+      "styleStudio": "Estudio",
+      "styleWhite": "Fondo blanco",
+      "styleLifestyle": "Lifestyle",
+      "generate": "Generar",
+      "aiGenerated": "Generado con IA",
+      "results": "Resultados"
+    }
   },
   "howItWorks": {
     "heading": "Cómo funciona",
+    "subheading": "Tres pasos, sin curva de aprendizaje.",
     "step1Title": "Elegí una herramienta",
-    "step1Body": "Elegí la herramienta de IA que necesitás.",
+    "step1Body": "Entrá a la herramienta de IA que necesitás.",
+    "step1Visual": "Fotos de Producto",
     "step2Title": "Subí o describí",
-    "step2Body": "Dale a la herramienta la información que necesita.",
+    "step2Body": "Dale a la herramienta la información con la que va a trabajar.",
+    "step2Visual": "Subir imagen",
     "step3Title": "Obtené tu resultado",
-    "step3Body": "Generá tu resultado en segundos.",
-    "step4Title": "Seguí creando",
-    "step4Body": "Usá más herramientas cuando las necesites."
+    "step3Body": "Recibí un conjunto de resultados profesionales en segundos.",
+    "step3Visual": "Listo"
   },
   "freeUsage": {
     "heading": "Probalo antes de pagar.",
-    "body": "Cada herramienta de Novalup AI incluye uso gratuito para que veas el resultado antes de comprar más generaciones."
+    "body": "Cada herramienta de Novalup AI incluye uso gratuito para que veas el resultado antes de comprometerte.",
+    "cta": "Explorar herramientas"
   },
   "about": {
-    "heading": "Sobre Novalup AI",
+    "heading": "Herramientas de IA pensadas para problemas reales.",
     "body": "Novalup AI es una colección creciente de herramientas prácticas de inteligencia artificial, creadas para hacer las tareas cotidianas más rápidas, simples y accesibles."
   },
   "finalCta": {
-    "heading": "Encontrá una herramienta. Probala. Conseguí resultados.",
+    "heading": "Encontrá una herramienta. Creá algo útil.",
     "subheading": "Explorá Novalup AI y empezá a crear.",
     "cta": "Explorar herramientas"
   },

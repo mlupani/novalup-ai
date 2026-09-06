@@ -3,17 +3,42 @@
 @tailwind utilities;
 
 body {
-  background-color: #fafafa;
+  background-color: #0b0b0d;
 }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+::selection {
+  background-color: rgba(225, 29, 72, 0.35);
+  color: #ffffff;
 }
 
 .reveal-on-scroll {
   transition-property: opacity, transform;
   transition-duration: 700ms;
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Soft radial accent used behind the hero and the final CTA. */
+.accent-glow {
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(225, 29, 72, 0.18) 0%,
+    rgba(225, 29, 72, 0) 100%
+  );
+}
+
+/* Hairline that fades out at both ends, for section dividers. */
+.hairline {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -27,7 +52,8 @@ html {
     transform: none !important;
   }
 
-  .animate-float {
+  .animate-float,
+  .animate-float-sm {
     animation: none !important;
   }
 }
