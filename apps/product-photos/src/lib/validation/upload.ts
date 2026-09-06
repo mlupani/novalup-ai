@@ -10,3 +10,9 @@ export function assertValidImage(file: { type: string; size: number }):
   if (file.size > MAX_UPLOAD_BYTES) return { ok: false, reason: "size" };
   return { ok: true };
 }
+
+export function contentTypeToExt(contentType: string): "jpg" | "png" | "webp" {
+  if (contentType === "image/png") return "png";
+  if (contentType === "image/webp") return "webp";
+  return "jpg";
+}
