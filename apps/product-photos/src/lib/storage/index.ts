@@ -18,3 +18,22 @@ export function mediaKey(
 export function mediaApiUrl(generationId: string, kind: "original" | "generated"): string {
   return `/api/media/${generationId}/${kind}`;
 }
+
+const EXT_BY_KIND: Record<"original" | "generated", string[]> = {
+  original: ["jpg", "jpeg", "png", "webp"],
+  generated: ["png"],
+};
+
+export async function readMedia(
+  generationId: string,
+  kind: "original" | "generated",
+): Promise<{ data: Buffer; contentType: string } | null> {
+  for (const ext of EXT_BY_KIND[kind]) {
+    try {
+      return await storage.read(mediaKey(generationId, kind, ext));
+    } catch {
+      /* try next extension */
+    }
+  }
+  return null;
+}
