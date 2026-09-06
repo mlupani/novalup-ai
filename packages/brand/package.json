@@ -6,5 +6,11 @@
   "main": "tailwind-preset.ts",
   "exports": {
     "./tailwind-preset": "./tailwind-preset.ts"
+  },
+  "peerDependencies": {
+    "tailwindcss": ">=3.4"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
   }
 }

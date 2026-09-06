@@ -6,8 +6,13 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  apps/web:
     dependencies:
+      '@novalup/brand':
+        specifier: workspace:*
+        version: link:../../packages/brand
       lucide-react:
         specifier: ^0.469.0
         version: 0.469.0(react@19.2.8)
@@ -51,6 +56,12 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  packages/brand:
+    devDependencies:
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.19
 
 packages:
 
