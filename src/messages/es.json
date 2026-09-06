@@ -53,6 +53,8 @@
     "heading": "Fotos de Producto con IA",
     "beforeLabel": "Antes",
     "afterLabel": "Después",
+    "beforeAlt": "Foto casera de unos auriculares sobre una mesa, sacada con el celular.",
+    "afterAlt": "Foto profesional de los mismos auriculares, con fondo blanco de estudio.",
     "step1": "Subí una foto de tu producto.",
     "step2": "Elegí un estilo.",
     "step3": "Generá un conjunto de imágenes profesionales.",

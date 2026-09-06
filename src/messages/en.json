@@ -53,6 +53,8 @@
     "heading": "AI Product Photos",
     "beforeLabel": "Before",
     "afterLabel": "After",
+    "beforeAlt": "Casual smartphone photo of a pair of headphones on a table.",
+    "afterAlt": "Professional photo of the same headphones on a white studio background.",
     "step1": "Upload a product photo.",
     "step2": "Choose a style.",
     "step3": "Generate a set of professional images.",
