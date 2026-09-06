@@ -19,4 +19,5 @@ apps/*/.next/
 apps/*/node_modules/
 packages/*/node_modules/
 apps/product-photos/.data/
+apps/product-photos/src/generated/
 .env
