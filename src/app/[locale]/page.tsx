@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { Hero } from "@/components/home/Hero";
 import { ProductGrid } from "@/components/home/ProductGrid";
-import { FeaturedProduct } from "@/components/home/FeaturedProduct";
+// import { FeaturedProduct } from "@/components/home/FeaturedProduct"; // temporarily hidden, see below
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { FreeUsage } from "@/components/home/FreeUsage";
 import { About } from "@/components/home/About";
@@ -30,7 +30,7 @@ export default async function HomePage({ params }: Props) {
     <>
       <Hero />
       <ProductGrid />
-      <FeaturedProduct />
+      {/* FeaturedProduct temporarily hidden at the user's request — re-enable when ready. */}
       <HowItWorks />
       <FreeUsage />
       <About />
