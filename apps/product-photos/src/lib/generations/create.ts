@@ -52,13 +52,14 @@ export async function createGeneration(args: {
   });
 
   const ext = contentTypeToExt(contentType);
-  await storage.put(mediaKey(generation.id, "original", ext), image, contentType);
-  await prisma.generation.update({
-    where: { id: generation.id },
-    data: { originalImageUrl: mediaApiUrl(generation.id, "original") },
-  });
 
   try {
+    await storage.put(mediaKey(generation.id, "original", ext), image, contentType);
+    await prisma.generation.update({
+      where: { id: generation.id },
+      data: { originalImageUrl: mediaApiUrl(generation.id, "original") },
+    });
+
     const { jobId } = await provider.createJob({
       image,
       fileName: `${generation.id}-original.${ext}`,

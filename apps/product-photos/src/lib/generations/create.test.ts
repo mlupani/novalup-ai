@@ -1,12 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { generation } = vi.hoisted(() => ({
+const { generation, storage } = vi.hoisted(() => ({
   generation: { create: vi.fn(), update: vi.fn(), findFirst: vi.fn() },
+  storage: { put: vi.fn().mockResolvedValue({ url: "k" }) },
 }));
 vi.mock("@/lib/db/client", () => ({ prisma: { generation } }));
 vi.mock("@/lib/credits/service", () => ({ getCredits: vi.fn() }));
 vi.mock("@/lib/storage/index", () => ({
-  storage: { put: vi.fn().mockResolvedValue({ url: "k" }) },
+  storage,
   mediaKey: (id: string, k: string, e: string) => `${id}/${k}.${e}`,
   mediaApiUrl: (id: string, k: string) => `/api/media/${id}/${k}`,
 }));
@@ -52,6 +53,13 @@ describe("createGeneration", () => {
   });
   it("marks the row failed and returns PROVIDER_ERROR when the provider throws", async () => {
     vi.mocked(provider.createJob).mockRejectedValue(new Error("kie down"));
+    expect(await createGeneration(baseArgs)).toEqual({ ok: false, code: "PROVIDER_ERROR" });
+    expect(generation.update).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: "g1" }, data: expect.objectContaining({ status: "failed" }) }),
+    );
+  });
+  it("marks the row failed and returns PROVIDER_ERROR when storage.put rejects", async () => {
+    storage.put.mockRejectedValue(new Error("storage down"));
     expect(await createGeneration(baseArgs)).toEqual({ ok: false, code: "PROVIDER_ERROR" });
     expect(generation.update).toHaveBeenCalledWith(
       expect.objectContaining({ where: { id: "g1" }, data: expect.objectContaining({ status: "failed" }) }),
