@@ -1,6 +1,5 @@
 "use client";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
-import { Field, inputClass } from "@/components/ui/Field";
 import { FORMATS, STYLES, BACKGROUNDS } from "@/lib/ai/options";
 import type { FormatId, StyleId, BackgroundId } from "@/lib/ai/options";
 import copy from "@/content/copy";
@@ -9,14 +8,14 @@ export type OptionValue = {
   format: FormatId | null;
   style: StyleId | null;
   background: BackgroundId | null;
-  instructions: string;
 };
 
 export function OptionPicker({
-  value, onChange,
-}: { value: OptionValue; onChange: (patch: Partial<OptionValue>) => void }) {
+  value, onChange, title,
+}: { value: OptionValue; onChange: (patch: Partial<OptionValue>) => void; title?: string }) {
   return (
     <div className="flex flex-col gap-6">
+      {title ? <h3 className="text-sm font-semibold text-neutral-200">{title}</h3> : null}
       <div className="flex flex-col gap-2">
         <span className="text-sm font-medium text-neutral-300">{copy.tool.formatLabel}</span>
         <SegmentedControl
@@ -44,17 +43,6 @@ export function OptionPicker({
           onChange={(v) => onChange({ background: v })}
         />
       </div>
-      <Field label={copy.tool.instructionsLabel} htmlFor="instructions">
-        <textarea
-          id="instructions"
-          className={inputClass}
-          rows={3}
-          maxLength={1000}
-          placeholder={copy.tool.instructionsPlaceholder}
-          value={value.instructions}
-          onChange={(e) => onChange({ instructions: e.target.value })}
-        />
-      </Field>
     </div>
   );
 }

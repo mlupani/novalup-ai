@@ -30,6 +30,7 @@ const copy = {
     uploadHint: "Arrastrá una imagen o hacé clic para subirla",
     uploadFormats: "JPG, PNG o WEBP · hasta 10 MB",
     changeImage: "Cambiar imagen",
+    removeImage: "Quitar imagen",
     photoCountLabel: "Cantidad de fotos",
     photoCountOption: (n: number) => n === 1 ? "1 foto" : `${n} fotos`,
     photoNLabel: (i: number) => `Foto ${i}`,
