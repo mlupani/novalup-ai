@@ -1,4 +1,4 @@
-import type { CreateJobInput, JobResult, ProductPhotoProvider } from "@/lib/ai/product-photo-provider";
+import type { CreateJobInput, JobResult, ProductPhotoProvider, UploadImageInput } from "@/lib/ai/product-photo-provider";
 
 const UPLOAD_PATH = "product-photos/uploads";
 
@@ -35,9 +35,9 @@ export class KieProvider implements ProductPhotoProvider {
     return body;
   }
 
-  private async uploadImage(input: CreateJobInput): Promise<string> {
+  private async uploadOne(input: UploadImageInput): Promise<string> {
     const form = new FormData();
-    form.append("file", new Blob([new Uint8Array(input.image)], { type: input.contentType }), input.fileName);
+    form.append("file", new Blob([new Uint8Array(input.data)], { type: input.contentType }), input.fileName);
     form.append("uploadPath", UPLOAD_PATH);
     form.append("fileName", input.fileName);
     const res = await fetch(this.uploadUrl, {
@@ -51,17 +51,20 @@ export class KieProvider implements ProductPhotoProvider {
     return url;
   }
 
-  async createJob(input: CreateJobInput): Promise<{ jobId: string }> {
-    const imageUrl = await this.uploadImage(input);
+  async uploadImages(images: UploadImageInput[]): Promise<string[]> {
+    return Promise.all(images.map((img) => this.uploadOne(img)));
+  }
+
+  async createJob({ imageUrls, prompt, aspectRatio }: CreateJobInput): Promise<{ jobId: string }> {
     const res = await fetch(`${this.base}/api/v1/jobs/createTask`, {
       method: "POST",
       headers: { Authorization: `Bearer ${this.key}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: this.model,
         input: {
-          prompt: input.prompt,
-          image_input: [imageUrl],
-          aspect_ratio: input.aspectRatio,
+          prompt,
+          image_input: imageUrls,
+          aspect_ratio: aspectRatio,
           resolution: this.resolution,
           output_format: "png",
         },

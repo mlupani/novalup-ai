@@ -68,13 +68,10 @@ export async function createGeneration(args: {
       data: { originalImageUrl: mediaApiUrl(generation.id, "original") },
     });
 
-    const { jobId } = await provider.createJob({
-      image,
-      fileName: `${generation.id}-original.${ext}`,
-      contentType,
-      prompt,
-      aspectRatio,
-    });
+    const [imageUrl] = await provider.uploadImages([
+      { data: image, contentType, fileName: `${generation.id}-original.${ext}` },
+    ]);
+    const { jobId } = await provider.createJob({ imageUrls: [imageUrl], prompt, aspectRatio });
     await prisma.generation.update({ where: { id: generation.id }, data: { providerJobId: jobId } });
     return { ok: true, id: generation.id };
   } catch (err) {

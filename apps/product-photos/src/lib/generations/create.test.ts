@@ -11,7 +11,7 @@ vi.mock("@/lib/storage/index", () => ({
   mediaKey: (id: string, k: string, e: string) => `${id}/${k}.${e}`,
   mediaApiUrl: (id: string, k: string) => `/api/media/${id}/${k}`,
 }));
-vi.mock("@/lib/ai/product-photo-provider", () => ({ provider: { createJob: vi.fn() } }));
+vi.mock("@/lib/ai/product-photo-provider", () => ({ provider: { uploadImages: vi.fn(), createJob: vi.fn() } }));
 
 import { createGeneration } from "@/lib/generations/create";
 import { getCredits } from "@/lib/credits/service";
@@ -34,6 +34,7 @@ beforeEach(() => {
   generation.update.mockResolvedValue({});
   vi.mocked(getCredits).mockResolvedValue(3);
   vi.mocked(provider.createJob).mockResolvedValue({ jobId: "task_1" });
+  vi.mocked(provider.uploadImages).mockResolvedValue(["https://cdn/ref.png"]);
 });
 
 describe("createGeneration", () => {
@@ -71,7 +72,7 @@ describe("createGeneration", () => {
     expect(res).toEqual({ ok: true, id: "g1" });
     expect(generation.update).toHaveBeenCalledWith({ where: { id: "g1" }, data: { providerJobId: "task_1" } });
     expect(provider.createJob).toHaveBeenCalledWith(
-      expect.objectContaining({ aspectRatio: "1:1", prompt: expect.stringMatching(/photorealistic/i) }),
+      expect.objectContaining({ imageUrls: ["https://cdn/ref.png"], aspectRatio: "1:1", prompt: expect.stringMatching(/photorealistic/i) }),
     );
   });
   it("marks the row failed and returns PROVIDER_ERROR when the provider throws", async () => {

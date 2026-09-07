@@ -17,35 +17,42 @@ function jsonResponse(body: unknown, status = 200) {
 }
 
 describe("KieProvider.createJob", () => {
-  it("uploads the image then creates a task and returns the taskId", async () => {
-    const fetchMock = vi.spyOn(global, "fetch")
-      .mockResolvedValueOnce(jsonResponse({ success: true, data: { downloadUrl: "https://cdn/x.png" } }))
-      .mockResolvedValueOnce(jsonResponse({ code: 200, data: { taskId: "task_123" } }));
-
-    const p = new KieProvider();
-    const { jobId } = await p.createJob({
-      image: Buffer.from("img"),
-      fileName: "gen1-original.png",
-      contentType: "image/png",
-      prompt: "make it nice",
-      aspectRatio: "1:1",
-    });
-
-    expect(jobId).toBe("task_123");
-    const createCall = fetchMock.mock.calls[1];
-    expect(String(createCall[0])).toContain("/api/v1/jobs/createTask");
-    const bodySent = JSON.parse((createCall[1] as RequestInit).body as string);
-    expect(bodySent.model).toBe("nano-banana-2");
-    expect(bodySent.input.image_input).toEqual(["https://cdn/x.png"]);
-    expect(bodySent.input.aspect_ratio).toBe("1:1");
-  });
-
   it("throws when KIE_API_KEY is missing", async () => {
     delete process.env.KIE_API_KEY;
     const p = new KieProvider();
     await expect(
-      p.createJob({ image: Buffer.from("i"), fileName: "a.png", contentType: "image/png", prompt: "p", aspectRatio: "1:1" }),
+      p.createJob({ imageUrls: ["https://cdn/a.png"], prompt: "p", aspectRatio: "1:1" }),
     ).rejects.toThrow(/KIE_API_KEY/);
+  });
+});
+
+describe("KieProvider.uploadImages", () => {
+  it("uploads each image and returns urls in order", async () => {
+    const fetchMock = vi.spyOn(global, "fetch")
+      .mockResolvedValueOnce(jsonResponse({ success: true, data: { downloadUrl: "https://cdn/a.png" } }))
+      .mockResolvedValueOnce(jsonResponse({ success: true, data: { downloadUrl: "https://cdn/b.png" } }));
+    const urls = await new KieProvider().uploadImages([
+      { data: Buffer.from("a"), contentType: "image/png", fileName: "a.png" },
+      { data: Buffer.from("b"), contentType: "image/png", fileName: "b.png" },
+    ]);
+    expect(urls).toEqual(["https://cdn/a.png", "https://cdn/b.png"]);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("KieProvider.createJob (imageUrls)", () => {
+  it("sends image_input as the given urls and does not upload", async () => {
+    const fetchMock = vi.spyOn(global, "fetch")
+      .mockResolvedValueOnce(jsonResponse({ code: 200, data: { taskId: "t1" } }));
+    const { jobId } = await new KieProvider().createJob({
+      imageUrls: ["https://cdn/a.png", "https://cdn/b.png"],
+      prompt: "p", aspectRatio: "4:5",
+    });
+    expect(jobId).toBe("t1");
+    expect(fetchMock).toHaveBeenCalledTimes(1); // no upload
+    const body = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(body.input.image_input).toEqual(["https://cdn/a.png", "https://cdn/b.png"]);
+    expect(body.model).toBe("nano-banana-2");
   });
 });
 
