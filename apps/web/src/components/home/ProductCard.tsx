@@ -87,27 +87,30 @@ export function ProductCard({
     />
   );
 
-  if (featured) {
-    return (
-      <Link href={product.href} className={`${cardClasses} p-6 md:p-8`}>
-        {glow}
-        <div className="relative z-10 flex flex-1 flex-col justify-center gap-6 lg:flex-row lg:items-stretch lg:gap-10">
-          <div className="flex flex-col justify-center gap-5 lg:flex-1">
-            {header}
-            {copy}
-            {cta}
-          </div>
-          <div aria-hidden="true" className="w-full lg:w-1/2">
-            <span className="block lg:hidden">{preview}</span>
-            <span className="hidden h-full lg:block">{stretchedPreview}</span>
-          </div>
-        </div>
-      </Link>
-    );
-  }
+  const isExternalLink =
+    product.href.startsWith("http://") ||
+    product.href.startsWith("https://") ||
+    product.href.includes("://");
 
-  return (
-    <Link href={product.href} className={`${cardClasses} gap-5 p-6`}>
+  const cardContent = (
+    <>
+      {glow}
+      <div className="relative z-10 flex flex-1 flex-col justify-center gap-6 lg:flex-row lg:items-stretch lg:gap-10">
+        <div className="flex flex-col justify-center gap-5 lg:flex-1">
+          {header}
+          {copy}
+          {cta}
+        </div>
+        <div aria-hidden="true" className="w-full lg:w-1/2">
+          <span className="block lg:hidden">{preview}</span>
+          <span className="hidden h-full lg:block">{stretchedPreview}</span>
+        </div>
+      </div>
+    </>
+  );
+
+  const regularCardContent = (
+    <>
       {glow}
       <div className="relative z-10">{header}</div>
       <div aria-hidden="true" className="relative z-10">
@@ -115,6 +118,35 @@ export function ProductCard({
       </div>
       <div className="relative z-10">{copy}</div>
       <div className="relative z-10 mt-auto pt-1">{cta}</div>
+    </>
+  );
+
+  if (featured) {
+    if (isExternalLink) {
+      return (
+        <a href={product.href} className={`${cardClasses} p-6 md:p-8`}>
+          {cardContent}
+        </a>
+      );
+    }
+    return (
+      <Link href={product.href} className={`${cardClasses} p-6 md:p-8`}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  if (isExternalLink) {
+    return (
+      <a href={product.href} className={`${cardClasses} gap-5 p-6`}>
+        {regularCardContent}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={product.href} className={`${cardClasses} gap-5 p-6`}>
+      {regularCardContent}
     </Link>
   );
 }

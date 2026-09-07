@@ -41,6 +41,15 @@ export function Button({
     );
   }
 
+  // External URLs (http://, https://, or containing ://)
+  if (href && (href.startsWith("http://") || href.startsWith("https://") || href.includes("://"))) {
+    return (
+      <a href={href} onClick={onClick} className={classes}>
+        {children}
+      </a>
+    );
+  }
+
   if (href) {
     return (
       <Link href={href} onClick={onClick} className={classes}>

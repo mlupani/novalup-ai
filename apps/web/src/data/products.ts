@@ -6,6 +6,7 @@ import {
   LineChart,
   type LucideIcon,
 } from "lucide-react";
+import { PRODUCT_PHOTOS_URL } from "@/lib/constants";
 
 export type ProductStatus = "available" | "coming-soon";
 
@@ -21,7 +22,7 @@ export interface Product {
 export const products: Product[] = [
   {
     slug: "product-photos",
-    href: "/product-photos",
+    href: PRODUCT_PHOTOS_URL,
     status: "available",
     icon: Camera,
     category: "creative",

@@ -1,5 +1,8 @@
 export const SITE_URL = "https://novalup.ai";
 
+export const PRODUCT_PHOTOS_URL =
+  process.env.NEXT_PUBLIC_PRODUCT_PHOTOS_URL ?? "http://localhost:3000";
+
 export const NAV_LINKS = [
   { key: "products", href: "/#products" },
   { key: "howItWorks", href: "/#how-it-works" },

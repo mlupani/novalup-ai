@@ -4,6 +4,7 @@ import { Sparkles } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import { PRODUCT_PHOTOS_URL } from "@/lib/constants";
 
 const BEFORE_SRC = "/images/featured-product/before.jpg";
 const AFTER_SRC = "/images/featured-product/after.jpg";
@@ -153,7 +154,7 @@ export function ProductShowcase() {
           <p className="max-w-md text-base leading-relaxed text-neutral-400 md:text-lg">
             {t("subheading")}
           </p>
-          <Button href="/product-photos" variant="primary" className="mt-2">
+          <Button href={PRODUCT_PHOTOS_URL} variant="primary" className="mt-2">
             {t("cta")}
           </Button>
         </RevealOnScroll>
