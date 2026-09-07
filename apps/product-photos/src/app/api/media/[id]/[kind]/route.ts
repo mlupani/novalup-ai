@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db/client";
 import { requireUser } from "@/lib/auth/session";
 import { readMedia } from "@/lib/storage/index";
 
-const KINDS = new Set(["original", "generated"]);
+const KINDS = new Set(["original", "generated", "reference-0", "reference-1"]);
 
 export async function GET(
   request: Request,
@@ -23,7 +23,7 @@ export async function GET(
     return new NextResponse(null, { status: 404 });
   }
 
-  const file = await readMedia(id, kind as "original" | "generated");
+  const file = await readMedia(id, kind as "original" | "generated" | "reference-0" | "reference-1");
   if (!file) return new NextResponse(null, { status: 404 });
 
   const headers = new Headers({

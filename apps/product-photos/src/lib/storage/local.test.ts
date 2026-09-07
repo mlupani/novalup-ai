@@ -24,4 +24,11 @@ describe("LocalStorage", () => {
     const s = new LocalStorage(dir);
     await expect(s.read("missing/x.png")).rejects.toThrow();
   });
+  it("round-trips a reference-0 media", async () => {
+    const s = new LocalStorage(dir);
+    await s.put("gen1/reference-0.jpg", Buffer.from("ref"), "image/jpeg");
+    const got = await s.read("gen1/reference-0.jpg");
+    expect(got.data.toString()).toBe("ref");
+    expect(got.contentType).toBe("image/jpeg");
+  });
 });

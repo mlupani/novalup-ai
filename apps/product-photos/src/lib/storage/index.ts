@@ -9,24 +9,26 @@ export const storage: Storage = new LocalStorage(process.env.STORAGE_DIR ?? "./.
 
 export function mediaKey(
   generationId: string,
-  kind: "original" | "generated",
+  kind: "original" | "generated" | "reference-0" | "reference-1",
   ext: string,
 ): string {
   return `${generationId}/${kind}.${ext}`;
 }
 
-export function mediaApiUrl(generationId: string, kind: "original" | "generated"): string {
+export function mediaApiUrl(generationId: string, kind: "original" | "generated" | "reference-0" | "reference-1"): string {
   return `/api/media/${generationId}/${kind}`;
 }
 
-const EXT_BY_KIND: Record<"original" | "generated", string[]> = {
+const EXT_BY_KIND: Record<"original" | "generated" | "reference-0" | "reference-1", string[]> = {
   original: ["jpg", "jpeg", "png", "webp"],
   generated: ["png"],
+  "reference-0": ["jpg", "jpeg", "png", "webp"],
+  "reference-1": ["jpg", "jpeg", "png", "webp"],
 };
 
 export async function readMedia(
   generationId: string,
-  kind: "original" | "generated",
+  kind: "original" | "generated" | "reference-0" | "reference-1",
 ): Promise<{ data: Buffer; contentType: string } | null> {
   // Defense in depth: `generationId` reaches `join(root, key)` — reject anything
   // that is not a bare cuid so a crafted id can never traverse out of the root.

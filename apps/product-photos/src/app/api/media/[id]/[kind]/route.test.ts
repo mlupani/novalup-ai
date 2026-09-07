@@ -40,4 +40,12 @@ describe("GET /api/media/:id/:kind", () => {
     const res = await GET(new Request("http://x/api/media/g1/generated?download=1"), ctx("g1", "generated"));
     expect(res.headers.get("content-disposition")).toContain("attachment");
   });
+  it("streams reference-0 media for the owner", async () => {
+    findUnique.mockResolvedValue({ id: "g1", userId: "u1" });
+    readMedia.mockResolvedValue({ data: Buffer.from("JPG"), contentType: "image/jpeg" });
+    const res = await GET(new Request("http://x/api/media/g1/reference-0"), ctx("g1", "reference-0"));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toBe("image/jpeg");
+    expect(Buffer.from(await res.arrayBuffer()).toString()).toBe("JPG");
+  });
 });
