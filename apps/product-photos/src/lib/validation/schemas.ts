@@ -19,13 +19,6 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-export const generationInputSchema = z.object({
-  format: z.string().refine(isFormatId, "invalid_format"),
-  style: z.string().refine(isStyleId, "invalid_style"),
-  background: z.string().refine(isBackgroundId, "invalid_background"),
-  instructions: z.string().trim().max(1000).optional(),
-});
-
 export const feedbackSchema = z.object({
   name: z.string().trim().min(1).max(120),
   email: z.string().trim().email(),
@@ -44,7 +37,6 @@ export const batchInputSchema = z.object({
   instructions: z.string().trim().max(1000).optional(),
 });
 
-export type GenerationInput = z.infer<typeof generationInputSchema>;
 export type FeedbackInput = z.infer<typeof feedbackSchema>;
 export type PhotoOption = z.infer<typeof photoOptionSchema>;
 export type BatchInput = z.infer<typeof batchInputSchema>;

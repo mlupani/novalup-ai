@@ -2,83 +2,117 @@ import { prisma } from "@/lib/db/client";
 import { getCredits } from "@/lib/credits/service";
 import { buildPrompt } from "@/lib/ai/prompt";
 import { formatToAspectRatio } from "@/lib/ai/options";
+import type { FormatId, StyleId, BackgroundId } from "@/lib/ai/options";
 import { provider } from "@/lib/ai/product-photo-provider";
 import { storage, mediaKey, mediaApiUrl } from "@/lib/storage/index";
 import { contentTypeToExt } from "@/lib/validation/upload";
-import type { GenerationInput } from "@/lib/validation/schemas";
 
 const STALE_MS = 5 * 60 * 1000;
 
 type Result =
-  | { ok: true; id: string }
-  | { ok: false; code: "NO_CREDITS" | "GENERATION_IN_PROGRESS" | "PROVIDER_ERROR" };
+  | { ok: true; ids: string[] }
+  | { ok: false; code: "NO_CREDITS"; needed: number; available: number }
+  | { ok: false; code: "GENERATION_IN_PROGRESS" }
+  | { ok: false; code: "PROVIDER_ERROR" };
 
-export async function createGeneration(args: {
+export async function createBatch(args: {
   userId: string;
-  image: Buffer;
-  contentType: string;
-  input: GenerationInput;
+  referenceImages: { data: Buffer; contentType: string }[]; // 1–MAX_REFERENCE_IMAGES
+  photos: { format: FormatId; style: StyleId; background: BackgroundId }[]; // 1–MAX_PHOTOS
+  instructions?: string;
 }): Promise<Result> {
-  const { userId, image, contentType, input } = args;
+  const { userId, referenceImages, photos, instructions } = args;
 
-  // Reap abandoned pendings first: credits are only decremented at poll time, so a
-  // pending that never gets polled would otherwise let the caller hold a free slot
-  // forever once it aged past STALE_MS. Fail them, then guard on ANY live pending.
+  // 1. Reap abandoned pendings (F1 reap) — credits decrement only at poll time, so a
+  //    never-polled pending would otherwise hold a free slot forever once stale.
   await prisma.generation.updateMany({
     where: { userId, status: "pending", createdAt: { lte: new Date(Date.now() - STALE_MS) } },
     data: { status: "failed", error: "timeout" },
   });
 
+  // 2. In-progress guard — ANY live pending (no createdAt filter, per the F1 fix).
   const inProgress = await prisma.generation.findFirst({
     where: { userId, status: "pending" },
     select: { id: true },
   });
   if (inProgress) return { ok: false, code: "GENERATION_IN_PROGRESS" };
 
-  if ((await getCredits(userId)) <= 0) return { ok: false, code: "NO_CREDITS" };
-
-  const aspectRatio = formatToAspectRatio(input.format);
-  if (!aspectRatio) return { ok: false, code: "PROVIDER_ERROR" }; // guarded earlier by zod
-
-  const prompt = buildPrompt({
-    style: input.style,
-    background: input.background,
-    instructions: input.instructions,
-  });
-
-  const generation = await prisma.generation.create({
-    data: {
-      userId,
-      originalImageUrl: "",
-      format: input.format,
-      style: input.style,
-      background: input.background,
-      instructions: input.instructions ?? null,
-      prompt,
-      status: "pending",
-    },
-  });
-
-  const ext = contentTypeToExt(contentType);
-
-  try {
-    await storage.put(mediaKey(generation.id, "original", ext), image, contentType);
-    await prisma.generation.update({
-      where: { id: generation.id },
-      data: { originalImageUrl: mediaApiUrl(generation.id, "original") },
-    });
-
-    const [imageUrl] = await provider.uploadImages([
-      { data: image, contentType, fileName: `${generation.id}-original.${ext}` },
-    ]);
-    const { jobId } = await provider.createJob({ imageUrls: [imageUrl], prompt, aspectRatio });
-    await prisma.generation.update({ where: { id: generation.id }, data: { providerJobId: jobId } });
-    return { ok: true, id: generation.id };
-  } catch (err) {
-    await prisma.generation.update({
-      where: { id: generation.id },
-      data: { status: "failed", error: err instanceof Error ? err.message : "provider error" },
-    });
-    return { ok: false, code: "PROVIDER_ERROR" };
+  // 3. Credit gate — block the whole batch if fewer credits than photos.
+  const available = await getCredits(userId);
+  if (available < photos.length) {
+    return { ok: false, code: "NO_CREDITS", needed: photos.length, available };
   }
+
+  // 4. Upload the shared reference images once (reused by every photo's job).
+  let imageUrls: string[];
+  try {
+    imageUrls = await provider.uploadImages(
+      referenceImages.map((img, i) => ({
+        data: img.data,
+        contentType: img.contentType,
+        fileName: `reference-${i}.${contentTypeToExt(img.contentType)}`,
+      })),
+    );
+  } catch {
+    return { ok: false, code: "PROVIDER_ERROR" }; // nothing created yet
+  }
+
+  // 5. One unit per photo, kicked off in parallel. Each creates its row first
+  //    (so it always resolves with an id), then does storage + job in a try;
+  //    a per-photo failure marks only that row failed.
+  const startPhoto = async (photo: {
+    format: FormatId;
+    style: StyleId;
+    background: BackgroundId;
+  }): Promise<string> => {
+    const aspectRatio = formatToAspectRatio(photo.format);
+    const prompt = buildPrompt({ style: photo.style, background: photo.background, instructions });
+
+    const gen = await prisma.generation.create({
+      data: {
+        userId,
+        referenceImageUrls: [],
+        format: photo.format,
+        style: photo.style,
+        background: photo.background,
+        instructions: instructions ?? null,
+        prompt,
+        status: "pending",
+      },
+    });
+
+    try {
+      if (!aspectRatio) throw new Error("invalid format"); // guarded earlier by zod
+      const urls: string[] = [];
+      for (let i = 0; i < referenceImages.length; i++) {
+        const kind = i === 0 ? "reference-0" : "reference-1";
+        const ext = contentTypeToExt(referenceImages[i].contentType);
+        await storage.put(
+          mediaKey(gen.id, kind, ext),
+          referenceImages[i].data,
+          referenceImages[i].contentType,
+        );
+        urls.push(mediaApiUrl(gen.id, kind));
+      }
+      await prisma.generation.update({ where: { id: gen.id }, data: { referenceImageUrls: urls } });
+
+      const { jobId } = await provider.createJob({ imageUrls, prompt, aspectRatio });
+      await prisma.generation.update({ where: { id: gen.id }, data: { providerJobId: jobId } });
+    } catch (err) {
+      await prisma.generation.update({
+        where: { id: gen.id },
+        data: { status: "failed", error: err instanceof Error ? err.message : "provider error" },
+      });
+    }
+    return gen.id;
+  };
+
+  const settled = await Promise.allSettled(photos.map((p) => startPhoto(p)));
+  const ids = settled
+    .filter((s): s is PromiseFulfilledResult<string> => s.status === "fulfilled")
+    .map((s) => s.value);
+
+  // Every unit rejected → prisma.generation.create itself threw (DB down): infra failure.
+  if (ids.length === 0) return { ok: false, code: "PROVIDER_ERROR" };
+  return { ok: true, ids };
 }

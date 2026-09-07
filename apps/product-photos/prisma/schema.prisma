@@ -60,7 +60,7 @@ model Generation {
   id                String           @id @default(cuid())
   userId            String
   user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  originalImageUrl  String           // e.g. /api/media/<id>/original
+  referenceImageUrls String[]        @default([]) // /api/media/<id>/reference-0[,-1]
   generatedImageUrl String?          // e.g. /api/media/<id>/generated
   format            String           // "1:1" | "4:5" | "9:16" | "16:9"
   style             String           // studio | lifestyle | luxury | minimal | social-media

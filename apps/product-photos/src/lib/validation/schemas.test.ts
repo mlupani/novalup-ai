@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { signupSchema, generationInputSchema, feedbackSchema, batchInputSchema } from "@/lib/validation/schemas";
+import { signupSchema, feedbackSchema, batchInputSchema } from "@/lib/validation/schemas";
 import { MAX_PHOTOS } from "@/lib/limits";
 
 describe("signupSchema", () => {
@@ -10,15 +10,6 @@ describe("signupSchema", () => {
   it("accepts a valid signup", () => {
     const r = signupSchema.safeParse({ name: "Ana", email: "a@b.com", password: "12345678", confirmPassword: "12345678" });
     expect(r.success).toBe(true);
-  });
-});
-
-describe("generationInputSchema", () => {
-  it("rejects an unknown style", () => {
-    expect(generationInputSchema.safeParse({ format: "1:1", style: "nope", background: "clean" }).success).toBe(false);
-  });
-  it("accepts a valid combination with optional instructions", () => {
-    expect(generationInputSchema.safeParse({ format: "9:16", style: "luxury", background: "premium", instructions: "soft light" }).success).toBe(true);
   });
 });
 

@@ -1,43 +1,66 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth/session";
-import { generationInputSchema } from "@/lib/validation/schemas";
+import { batchInputSchema } from "@/lib/validation/schemas";
 import { assertValidImage } from "@/lib/validation/upload";
-import { createGeneration } from "@/lib/generations/create";
+import { MAX_REFERENCE_IMAGES } from "@/lib/limits";
+import { createBatch } from "@/lib/generations/create";
+import type { FormatId, StyleId, BackgroundId } from "@/lib/ai/options";
 
 export async function POST(request: Request) {
   const user = await requireUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const form = await request.formData();
-  const file = form.get("image");
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "invalid_image", reason: "missing" }, { status: 422 });
+
+  const files = form.getAll("referenceImages").filter((f): f is File => f instanceof File);
+  if (files.length < 1 || files.length > MAX_REFERENCE_IMAGES) {
+    return NextResponse.json({ error: "reference_images", reason: "count" }, { status: 422 });
+  }
+  for (const f of files) {
+    const check = assertValidImage({ type: f.type, size: f.size });
+    if (!check.ok) {
+      return NextResponse.json({ error: "invalid_image", reason: check.reason }, { status: 422 });
+    }
   }
 
-  const check = assertValidImage({ type: file.type, size: file.size });
-  if (!check.ok) {
-    return NextResponse.json({ error: "invalid_image", reason: check.reason }, { status: 422 });
+  const photosRaw = form.get("photos");
+  let photosParsed: unknown;
+  try {
+    photosParsed = JSON.parse(typeof photosRaw === "string" ? photosRaw : "");
+  } catch {
+    return NextResponse.json({ error: "validation", reason: "photos_json" }, { status: 422 });
   }
 
-  const parsed = generationInputSchema.safeParse({
-    format: form.get("format"),
-    style: form.get("style"),
-    background: form.get("background"),
-    instructions: form.get("instructions") || undefined,
+  const instructionsRaw = form.get("instructions");
+  const parsed = batchInputSchema.safeParse({
+    photos: photosParsed,
+    instructions: typeof instructionsRaw === "string" && instructionsRaw.trim() ? instructionsRaw : undefined,
   });
   if (!parsed.success) {
     return NextResponse.json({ error: "validation", issues: parsed.error.flatten() }, { status: 422 });
   }
 
-  const image = Buffer.from(await file.arrayBuffer());
-  const result = await createGeneration({
+  const referenceImages = await Promise.all(
+    files.map(async (f) => ({ data: Buffer.from(await f.arrayBuffer()), contentType: f.type })),
+  );
+
+  // batchInputSchema validated each field against the catalog guards (isFormatId/…).
+  const photos = parsed.data.photos as { format: FormatId; style: StyleId; background: BackgroundId }[];
+
+  const result = await createBatch({
     userId: user.id,
-    image,
-    contentType: file.type,
-    input: parsed.data,
+    referenceImages,
+    photos,
+    instructions: parsed.data.instructions,
   });
 
-  if (result.ok) return NextResponse.json({ id: result.id }, { status: 201 });
-  const status = result.code === "NO_CREDITS" ? 403 : result.code === "GENERATION_IN_PROGRESS" ? 409 : 502;
+  if (result.ok) return NextResponse.json({ ids: result.ids }, { status: 201 });
+  if (result.code === "NO_CREDITS") {
+    return NextResponse.json(
+      { code: "NO_CREDITS", needed: result.needed, available: result.available },
+      { status: 403 },
+    );
+  }
+  const status = result.code === "GENERATION_IN_PROGRESS" ? 409 : 502;
   return NextResponse.json({ code: result.code }, { status });
 }
