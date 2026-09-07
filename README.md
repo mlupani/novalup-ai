@@ -39,12 +39,14 @@ pnpm dev:web           # http://localhost:3100
 
 ## Deploy to production
 
-Production runs behind an **existing shared Traefik** on the host — a shared
-Docker network, a `websecure` (443) entrypoint, and a `letsencrypt` certresolver.
-`docker-compose.prod.yml` only attaches routers to it. Set `TRAEFIK_NETWORK` in
-`.env.production` to the network Traefik is on — find it with
-`docker inspect <traefik-container> -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}'`
-(often `traefik_default`).
+Production runs behind an **existing Traefik** on the host (running in
+`network_mode: host`) — a `websecure` (443) entrypoint, a `letsencrypt`
+certresolver, and a global `:80 → :443` redirect. `docker-compose.prod.yml`
+only attaches routers to it: the stack brings up its own `novalup-prod-web`
+bridge and Traefik reaches the containers by their IP on it (the
+`traefik.docker.network` label). Nothing to pre-create; leave `TRAEFIK_NETWORK`
+unset. (If your Traefik instead shares a user-defined network with its backends,
+set `TRAEFIK_NETWORK` to it and flip `web` to `external: true` in the compose file.)
 
 - `ai.novaluptech.com` → `web` (marketing site)
 - `photos.novaluptech.com` → `product-photos` (the app) + a container Postgres
@@ -52,7 +54,9 @@ Docker network, a `websecure` (443) entrypoint, and a `letsencrypt` certresolver
 
 ### One-time setup
 
-1. **DNS:** point `A` records `ai` and `photos` (under `novaluptech.com`) at the server IP.
+1. **DNS:** point `A` records `ai` and `photos` (under `novaluptech.com`) at the
+   server IP **before deploying** — the `letsencrypt` resolver uses the ACME
+   HTTP-01 challenge, which needs the names resolving to the host for cert issuance.
 2. **Google OAuth:** in Google Cloud Console, on the Web OAuth client, add
    - Authorized redirect URI: `https://photos.novaluptech.com/api/auth/callback/google`
    - Authorized JavaScript origin: `https://photos.novaluptech.com`
