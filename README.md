@@ -39,9 +39,12 @@ pnpm dev:web           # http://localhost:3100
 
 ## Deploy to production
 
-Production runs behind an **existing shared Traefik** on the host — an external
-Docker network `web`, a `websecure` (443) entrypoint, and a `letsencrypt`
-certresolver. `docker-compose.prod.yml` only attaches routers to it.
+Production runs behind an **existing shared Traefik** on the host — a shared
+Docker network, a `websecure` (443) entrypoint, and a `letsencrypt` certresolver.
+`docker-compose.prod.yml` only attaches routers to it. Set `TRAEFIK_NETWORK` in
+`.env.production` to the network Traefik is on — find it with
+`docker inspect <traefik-container> -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}'`
+(often `traefik_default`).
 
 - `ai.novaluptech.com` → `web` (marketing site)
 - `photos.novaluptech.com` → `product-photos` (the app) + a container Postgres

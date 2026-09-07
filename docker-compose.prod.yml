@@ -1,7 +1,11 @@
 # Novalup AI — production stack, fronted by an EXISTING shared Traefik.
 #
 # Prerequisites on the host:
-#   - Traefik already running, attached to an external Docker network named "web"
+#   - Traefik already running, attached to a Docker network shared with app
+#     containers. Set TRAEFIK_NETWORK in .env.production to that network's real
+#     name (often "<traefikproject>_default", e.g. "traefik_default"). Find it:
+#       docker inspect <traefik-container> \
+#         -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}'
 #   - a "websecure" (443) entrypoint and a "letsencrypt" certresolver configured
 #   - Traefik (or your base setup) redirects :80 -> :443 globally
 #
@@ -19,8 +23,14 @@
 name: novalup-prod
 
 networks:
-  web:
+  # The network your existing Traefik is attached to. Its real name usually
+  # carries the Traefik compose project prefix (e.g. `traefik_default`,
+  # `traefik_proxy`). Find it with:
+  #   docker inspect <traefik-container> -f '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{"\n"}}{{end}}'
+  # then set TRAEFIK_NETWORK in .env.production.
+  proxy:
     external: true
+    name: ${TRAEFIK_NETWORK:-web}
   internal:
     driver: bridge
 
@@ -73,11 +83,11 @@ services:
       FREE_CREDITS: ${FREE_CREDITS:-3}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
     networks:
-      - web
+      - proxy
       - internal
     labels:
       - traefik.enable=true
-      - traefik.docker.network=web
+      - traefik.docker.network=${TRAEFIK_NETWORK:-web}
       - traefik.http.routers.novalup-photos.rule=Host(`photos.novaluptech.com`)
       - traefik.http.routers.novalup-photos.entrypoints=websecure
       - traefik.http.routers.novalup-photos.tls.certresolver=letsencrypt
@@ -92,10 +102,10 @@ services:
         NEXT_PUBLIC_PRODUCT_PHOTOS_URL: ${NEXT_PUBLIC_PRODUCT_PHOTOS_URL:-https://photos.novaluptech.com}
     restart: unless-stopped
     networks:
-      - web
+      - proxy
     labels:
       - traefik.enable=true
-      - traefik.docker.network=web
+      - traefik.docker.network=${TRAEFIK_NETWORK:-web}
       - traefik.http.routers.novalup-web.rule=Host(`ai.novaluptech.com`)
       - traefik.http.routers.novalup-web.entrypoints=websecure
       - traefik.http.routers.novalup-web.tls.certresolver=letsencrypt
