@@ -21,8 +21,16 @@ export async function createGeneration(args: {
 }): Promise<Result> {
   const { userId, image, contentType, input } = args;
 
+  // Reap abandoned pendings first: credits are only decremented at poll time, so a
+  // pending that never gets polled would otherwise let the caller hold a free slot
+  // forever once it aged past STALE_MS. Fail them, then guard on ANY live pending.
+  await prisma.generation.updateMany({
+    where: { userId, status: "pending", createdAt: { lte: new Date(Date.now() - STALE_MS) } },
+    data: { status: "failed", error: "timeout" },
+  });
+
   const inProgress = await prisma.generation.findFirst({
-    where: { userId, status: "pending", createdAt: { gt: new Date(Date.now() - STALE_MS) } },
+    where: { userId, status: "pending" },
     select: { id: true },
   });
   if (inProgress) return { ok: false, code: "GENERATION_IN_PROGRESS" };

@@ -5,12 +5,16 @@ import copy from "@/content/copy";
 type State = "idle" | "starting" | "generating" | "completed" | "failed" | "out_of_credits";
 type Result = { generatedImageUrl: string; creditsRemaining: number };
 
-export function useGeneration(opts?: { pollIntervalMs?: number }) {
+export function useGeneration(opts?: { pollIntervalMs?: number; maxPollAttempts?: number }) {
   const pollIntervalMs = opts?.pollIntervalMs ?? 2000;
+  // ~90 polls ≈ 3 min at the 2s default — a generation still running past that is
+  // treated as failed so the client stops polling instead of looping forever.
+  const maxPollAttempts = opts?.maxPollAttempts ?? 90;
   const [state, setState] = useState<State>("idle");
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const attempts = useRef(0);
   const active = useRef(true);
 
   const stop = useCallback(() => {
@@ -33,7 +37,15 @@ export function useGeneration(opts?: { pollIntervalMs?: number }) {
   }, [stop]);
 
   const poll = useCallback((id: string) => {
+    attempts.current = 0;
     timer.current = setInterval(async () => {
+      if (!active.current) return;
+      if (++attempts.current > maxPollAttempts) {
+        stop();
+        setError(copy.errors.generationFailed);
+        setState("failed");
+        return;
+      }
       const res = await fetch(`/api/generations/${id}`);
       if (!active.current) return;
       if (!res.ok) return;
@@ -48,7 +60,7 @@ export function useGeneration(opts?: { pollIntervalMs?: number }) {
         setState("failed");
       }
     }, pollIntervalMs);
-  }, [stop, pollIntervalMs]);
+  }, [stop, pollIntervalMs, maxPollAttempts]);
 
   const start = useCallback(async (args: {
     image: File; format: string; style: string; background: string; instructions: string;

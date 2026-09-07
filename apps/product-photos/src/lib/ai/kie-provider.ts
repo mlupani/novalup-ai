@@ -26,7 +26,13 @@ export class KieProvider implements ProductPhotoProvider {
       const text = await res.text().catch(() => "");
       throw new Error(`Kie ${label} failed: ${res.status} ${text.slice(0, 300)}`);
     }
-    return res.json() as Promise<{ code?: number; msg?: string; data?: Record<string, unknown> }>;
+    const body = (await res.json()) as { code?: number; msg?: string; data?: Record<string, unknown> };
+    // Kie returns HTTP 200 with an error `code` (402 insufficient balance,
+    // 422 moderation, …) in the envelope — treat those as failures.
+    if (body.code != null && body.code !== 200) {
+      throw new Error(`Kie ${label} failed: code ${body.code} ${(body.msg ?? "").slice(0, 300)}`);
+    }
+    return body;
   }
 
   private async uploadImage(input: CreateJobInput): Promise<string> {
@@ -75,7 +81,14 @@ export class KieProvider implements ProductPhotoProvider {
     const state = body.data?.state as string | undefined;
     if (state === "success") {
       const raw = body.data?.resultJson as string | undefined;
-      const parsed = raw ? (JSON.parse(raw) as { resultUrls?: string[] }) : {};
+      let parsed: { resultUrls?: string[] } = {};
+      if (raw) {
+        try {
+          parsed = JSON.parse(raw) as { resultUrls?: string[] };
+        } catch {
+          return { status: "failed", error: "invalid result" };
+        }
+      }
       const imageUrl = parsed.resultUrls?.[0];
       if (!imageUrl) return { status: "failed", error: "no result url" };
       return { status: "completed", imageUrl };
@@ -83,6 +96,11 @@ export class KieProvider implements ProductPhotoProvider {
     if (state === "fail") {
       return { status: "failed", error: (body.data?.failMsg as string) || "generation failed" };
     }
-    return { status: "pending" };
+    if (state === "waiting" || state === "queuing" || state === "generating") {
+      return { status: "pending" };
+    }
+    // Absent or unrecognised state — do NOT treat as pending, or the client would
+    // poll forever against a job the provider will never advance.
+    return { status: "failed", error: "unknown provider state" };
   }
 }

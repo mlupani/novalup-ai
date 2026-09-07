@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { generation, storage } = vi.hoisted(() => ({
-  generation: { create: vi.fn(), update: vi.fn(), findFirst: vi.fn() },
+  generation: { create: vi.fn(), update: vi.fn(), findFirst: vi.fn(), updateMany: vi.fn() },
   storage: { put: vi.fn().mockResolvedValue({ url: "k" }) },
 }));
 vi.mock("@/lib/db/client", () => ({ prisma: { generation } }));
@@ -29,6 +29,7 @@ beforeEach(() => {
   storage.put.mockReset();
   storage.put.mockResolvedValue({ url: "k" });
   generation.findFirst.mockResolvedValue(null);
+  generation.updateMany.mockResolvedValue({ count: 0 });
   generation.create.mockResolvedValue({ id: "g1" });
   generation.update.mockResolvedValue({});
   vi.mocked(getCredits).mockResolvedValue(3);
@@ -39,6 +40,26 @@ describe("createGeneration", () => {
   it("blocks when a pending generation exists", async () => {
     generation.findFirst.mockResolvedValue({ id: "old" });
     expect(await createGeneration(baseArgs)).toEqual({ ok: false, code: "GENERATION_IN_PROGRESS" });
+  });
+  it("reaps stale pendings before the guard, then proceeds when none remain", async () => {
+    // A stale pending exists; the reap fails it, so findFirst then sees no live pending.
+    generation.updateMany.mockResolvedValue({ count: 1 });
+    generation.findFirst.mockResolvedValue(null);
+    const res = await createGeneration(baseArgs);
+    expect(res).toEqual({ ok: true, id: "g1" });
+    expect(generation.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          userId: "u1",
+          status: "pending",
+          createdAt: expect.objectContaining({ lte: expect.any(Date) }),
+        }),
+        data: { status: "failed", error: "timeout" },
+      }),
+    );
+    expect(generation.updateMany.mock.invocationCallOrder[0]).toBeLessThan(
+      generation.findFirst.mock.invocationCallOrder[0],
+    );
   });
   it("blocks when the user has 0 credits", async () => {
     vi.mocked(getCredits).mockResolvedValue(0);

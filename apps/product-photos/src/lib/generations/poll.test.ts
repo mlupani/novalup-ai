@@ -58,6 +58,15 @@ describe("pollGeneration", () => {
     );
   });
 
+  it("when the provider call rejects, returns pending without throwing or consuming a credit", async () => {
+    generation.findUnique.mockResolvedValue({ id: "g1", userId: "u1", status: "pending", providerJobId: "t1" });
+    vi.mocked(provider.getJob).mockRejectedValue(new Error("kie 500"));
+    const res = await pollGeneration({ userId: "u1", id: "g1" });
+    expect(res).toEqual({ status: "pending" });
+    expect(consumeOneCredit).not.toHaveBeenCalled();
+    expect(generation.updateMany).not.toHaveBeenCalled();
+  });
+
   it("on provider completion stores the image, transitions once, consumes one credit", async () => {
     generation.findUnique.mockResolvedValue({ id: "g1", userId: "u1", status: "pending", providerJobId: "t1" });
     vi.mocked(provider.getJob).mockResolvedValue({ status: "completed", imageUrl: "https://cdn/out.png" });

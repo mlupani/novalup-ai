@@ -66,4 +66,20 @@ describe("KieProvider.getJob", () => {
     );
     expect(await new KieProvider().getJob("t1")).toEqual({ status: "failed", error: "content blocked" });
   });
+  it("maps malformed resultJson to failed, not a throw", async () => {
+    vi.spyOn(global, "fetch").mockResolvedValue(
+      jsonResponse({ code: 200, data: { state: "success", resultJson: "not json" } }),
+    );
+    expect(await new KieProvider().getJob("t1")).toEqual({ status: "failed", error: "invalid result" });
+  });
+  it("maps an absent/unknown state to failed, not pending", async () => {
+    vi.spyOn(global, "fetch").mockResolvedValue(jsonResponse({ code: 200, data: {} }));
+    expect(await new KieProvider().getJob("t1")).toEqual({ status: "failed", error: "unknown provider state" });
+  });
+  it("throws when the envelope carries a non-200 code (e.g. 402 insufficient balance)", async () => {
+    vi.spyOn(global, "fetch").mockResolvedValue(
+      jsonResponse({ code: 402, msg: "insufficient balance", data: {} }),
+    );
+    await expect(new KieProvider().getJob("t1")).rejects.toThrow(/402|insufficient balance/);
+  });
 });

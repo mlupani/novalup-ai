@@ -18,6 +18,19 @@ describe("useGeneration", () => {
     expect(result.current.state).toBe("out_of_credits");
   });
 
+  it("stops and fails once the poll-attempt budget is exhausted", async () => {
+    let call = 0;
+    vi.spyOn(global, "fetch").mockImplementation(() => {
+      call += 1;
+      const body = call === 1 ? { id: "g1" } : { status: "pending" };
+      return Promise.resolve(new Response(JSON.stringify(body), { status: call === 1 ? 201 : 200 }));
+    });
+    const { result } = renderHook(() => useGeneration({ pollIntervalMs: 10, maxPollAttempts: 2 }));
+    await act(async () => { await result.current.start(args); });
+    await waitFor(() => expect(result.current.state).toBe("failed"), { timeout: 2000 });
+    expect(result.current.error).toBeTruthy();
+  });
+
   it("polls until completed", async () => {
     const fetchMock = vi.spyOn(global, "fetch")
       .mockResolvedValueOnce(new Response(JSON.stringify({ id: "g1" }), { status: 201 }))
