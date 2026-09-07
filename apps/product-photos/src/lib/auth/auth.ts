@@ -23,7 +23,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      allowDangerousEmailAccountLinking: true,
+      // Keep false (the default): with no email verification (spec §14), auto-linking
+      // would let someone who pre-registered victim@email with a password have the
+      // victim's later Google sign-in link onto the attacker's row. The tradeoff is a
+      // password user who tries Google gets `OAuthAccountNotLinked` — recoverable by
+      // signing in with their password.
+      allowDangerousEmailAccountLinking: false,
     }),
     Credentials({
       credentials: { email: {}, password: {} },
