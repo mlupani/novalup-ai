@@ -1,6 +1,6 @@
 # Novalup AI — Product Photos MVP local stack.
 #
-#   cp .env.example .env     # then fill NEXTAUTH_SECRET, GOOGLE_*, KIE_API_KEY, FORMSUBMIT_EMAIL
+#   cp .env.example .env     # then fill NEXTAUTH_SECRET, GOOGLE_*, KIE_API_KEY, CLOUDINARY_API_KEY/SECRET, FORMSUBMIT_EMAIL
 #   docker compose up --build
 #
 # Postgres starts first and must report healthy before `product-photos` boots;
@@ -45,18 +45,17 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       KIE_API_KEY: ${KIE_API_KEY}
       KIE_BASE_URL: ${KIE_BASE_URL:-https://api.kie.ai}
-      KIE_UPLOAD_URL: ${KIE_UPLOAD_URL:-https://kieai.redpandaai.co/api/file-stream-upload}
       KIE_MODEL: ${KIE_MODEL:-nano-banana-2}
       KIE_RESOLUTION: ${KIE_RESOLUTION:-2K}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-duz1soadb}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      CLOUDINARY_FOLDER: ${CLOUDINARY_FOLDER:-product-photos}
       FORMSUBMIT_EMAIL: ${FORMSUBMIT_EMAIL}
       FREE_CREDITS: ${FREE_CREDITS:-3}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
-      STORAGE_DIR: /data
     ports:
       - "3000:3000"
-    volumes:
-      - media:/data
 
 volumes:
   pgdata: {}
-  media: {}

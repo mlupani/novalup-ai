@@ -11,16 +11,15 @@ export type OptionValue = {
 };
 
 export function OptionPicker({
-  value, onChange, title,
-}: { value: OptionValue; onChange: (patch: Partial<OptionValue>) => void; title?: string }) {
+  value, onChange,
+}: { value: OptionValue; onChange: (patch: Partial<OptionValue>) => void }) {
   return (
     <div className="flex flex-col gap-6">
-      {title ? <h3 className="text-sm font-semibold text-neutral-200">{title}</h3> : null}
       <div className="flex flex-col gap-2">
         <span className="text-sm font-medium text-neutral-300">{copy.tool.formatLabel}</span>
         <SegmentedControl
           ariaLabel={copy.tool.formatLabel}
-          options={FORMATS.map((f) => ({ value: f.id, label: copy.tool.formats[f.id] }))}
+          options={FORMATS.map((f) => ({ value: f.id, label: copy.tool.formats[f.id], hint: copy.tool.formatHints[f.id] }))}
           value={value.format}
           onChange={(v) => onChange({ format: v })}
         />
@@ -29,7 +28,7 @@ export function OptionPicker({
         <span className="text-sm font-medium text-neutral-300">{copy.tool.styleLabel}</span>
         <SegmentedControl
           ariaLabel={copy.tool.styleLabel}
-          options={STYLES.map((s) => ({ value: s, label: copy.tool.styles[s] }))}
+          options={STYLES.map((s) => ({ value: s, label: copy.tool.styles[s], hint: copy.tool.styleHints[s] }))}
           value={value.style}
           onChange={(v) => onChange({ style: v })}
         />
@@ -38,7 +37,7 @@ export function OptionPicker({
         <span className="text-sm font-medium text-neutral-300">{copy.tool.backgroundLabel}</span>
         <SegmentedControl
           ariaLabel={copy.tool.backgroundLabel}
-          options={BACKGROUNDS.map((b) => ({ value: b, label: copy.tool.backgrounds[b] }))}
+          options={BACKGROUNDS.map((b) => ({ value: b, label: copy.tool.backgrounds[b], hint: copy.tool.backgroundHints[b] }))}
           value={value.background}
           onChange={(v) => onChange({ background: v })}
         />

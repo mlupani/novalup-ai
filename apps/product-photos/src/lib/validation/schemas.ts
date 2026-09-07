@@ -19,11 +19,10 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+// The sender's email is taken from the authenticated session in the API route,
+// never from the client — so the form only carries the free-text comment.
 export const feedbackSchema = z.object({
-  name: z.string().trim().min(1).max(120),
-  email: z.string().trim().email(),
-  thoughts: z.string().trim().min(1).max(2000),
-  nextIdeas: z.string().trim().min(1).max(2000),
+  message: z.string().trim().min(1).max(2000),
 });
 
 export const photoOptionSchema = z.object({

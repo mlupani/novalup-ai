@@ -1,3 +1,139 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Drifting pan + zoom for the landing / auth backdrop. Every stop stays scaled
+   well past the translation it pairs with, so the pan never exposes an edge:
+   at scale S the slack per side is (S-1)/2, and the effective offset is S × the
+   translate percentage. */
+@keyframes hero-drift {
+  0% {
+    transform: scale(1.2) translate3d(-3%, -2%, 0);
+  }
+  25% {
+    transform: scale(1.32) translate3d(2.5%, 2%, 0);
+  }
+  50% {
+    transform: scale(1.42) translate3d(3.5%, -2.5%, 0);
+  }
+  75% {
+    transform: scale(1.3) translate3d(-2%, 3%, 0);
+  }
+  100% {
+    transform: scale(1.2) translate3d(-3%, -2%, 0);
+  }
+}
+
+.animate-hero-drift {
+  animation: hero-drift 24s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-drift {
+    animation: none;
+    transform: scale(1.2);
+  }
+}
+
+/* The sparkle on the generating panel: a slow breathing pulse so the wait feels
+   alive without pulling focus off the step list. */
+@keyframes sparkle-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sparkle {
+    animation: none;
+  }
+}
+
+/* The dot inside the active generating step: a subtle beat so the current stage
+   reads as "working on it" rather than merely selected. */
+@keyframes step-pulse {
+  0%,
+  100% {
+    transform: scale(0.75);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+.animate-step-pulse {
+  animation: step-pulse 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-step-pulse {
+    animation: none;
+  }
+}
+
+/* Before/after reveal. The "after" layer is wiped in from the left while the
+   divider rides the same boundary — both animations share a duration and an
+   easing so the line stays locked to the clip edge. The holds at 8-42% and
+   58-92% let each state be read before it flips. */
+@keyframes ba-reveal {
+  0%,
+  8% {
+    clip-path: inset(0 100% 0 0);
+  }
+  42%,
+  58% {
+    clip-path: inset(0 0 0 0);
+  }
+  92%,
+  100% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@keyframes ba-divider {
+  0%,
+  8% {
+    left: 0%;
+  }
+  42%,
+  58% {
+    left: 100%;
+  }
+  92%,
+  100% {
+    left: 0%;
+  }
+}
+
+.animate-ba-reveal {
+  animation: ba-reveal 10s ease-in-out infinite;
+}
+
+.animate-ba-divider {
+  animation: ba-divider 10s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Hold a static split — it still shows both states side by side. */
+  .animate-ba-reveal {
+    animation: none;
+    clip-path: inset(0 50% 0 0);
+  }
+  .animate-ba-divider {
+    animation: none;
+    left: 50%;
+  }
+}

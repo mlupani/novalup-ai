@@ -12,7 +12,7 @@
 
 FROM node:22-slim AS base
 # openssl: Prisma needs it at generate/runtime. ca-certificates: outbound TLS to
-# Kie.ai, Google OAuth and FormSubmit.
+# Kie.ai, Cloudinary, Google OAuth and FormSubmit.
 RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
@@ -44,11 +44,8 @@ FROM base AS runner
 ENV NODE_ENV=production
 
 # Run as the unprivileged `node` user shipped in the base image. It needs write
-# access to /repo (Prisma writes engine artifacts, Next writes its cache) and to
-# the /data media volume mount point (a fresh named volume inherits this dir's
-# ownership on first mount).
+# access to /repo (Prisma writes engine artifacts, Next writes its cache).
 COPY --from=build --chown=node:node /repo /repo
-RUN mkdir -p /data && chown node:node /data
 USER node
 
 WORKDIR /repo/apps/product-photos

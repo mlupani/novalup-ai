@@ -16,20 +16,20 @@ vi.mock("@/lib/credits/service", () => ({
   getCredits: vi.fn().mockResolvedValue(2),
   consumeOneCredit: vi.fn().mockResolvedValue(true),
 }));
-vi.mock("@/lib/storage/index", () => ({
-  storage: { put: vi.fn().mockResolvedValue({ url: "k" }) },
-  mediaKey: (id: string, k: string, e: string) => `${id}/${k}.${e}`,
-  mediaApiUrl: (id: string, k: string) => `/api/media/${id}/${k}`,
-}));
+vi.mock("@/lib/storage/cloudinary", () => ({ uploadImage: vi.fn() }));
 
 import { pollGeneration } from "@/lib/generations/poll";
 import { provider } from "@/lib/ai/product-photo-provider";
 import { consumeOneCredit } from "@/lib/credits/service";
+import { uploadImage } from "@/lib/storage/cloudinary";
+
+const GEN_URL = "https://res.cloudinary.com/duz1soadb/image/upload/v1/product-photos/g1.png";
 
 beforeEach(() => {
   [generation.findUnique, generation.update, generation.updateMany, txGeneration.findUnique, txGeneration.update, txGeneration.updateMany, txUser.updateMany].forEach((f) => f.mockReset());
   vi.mocked(provider.getJob).mockReset();
   vi.mocked(consumeOneCredit).mockClear();
+  vi.mocked(uploadImage).mockReset().mockResolvedValue({ url: GEN_URL });
   txGeneration.updateMany.mockResolvedValue({ count: 1 });
   vi.spyOn(global, "fetch").mockResolvedValue(new Response(Buffer.from("PNG"), { status: 200 }));
 });
@@ -67,21 +67,34 @@ describe("pollGeneration", () => {
     expect(generation.updateMany).not.toHaveBeenCalled();
   });
 
-  it("on provider completion stores the image, transitions once, consumes one credit", async () => {
+  it("on provider completion uploads the image to Cloudinary, transitions once, consumes one credit", async () => {
     generation.findUnique.mockResolvedValue({ id: "g1", userId: "u1", status: "pending", providerJobId: "t1" });
     vi.mocked(provider.getJob).mockResolvedValue({ status: "completed", imageUrl: "https://cdn/out.png" });
     txGeneration.updateMany.mockResolvedValue({ count: 1 });
     const res = await pollGeneration({ userId: "u1", id: "g1" });
-    expect(res).toEqual({ status: "completed", generatedImageUrl: "/api/media/g1/generated", creditsRemaining: 2 });
+    expect(res).toEqual({ status: "completed", generatedImageUrl: GEN_URL, creditsRemaining: 2 });
+    expect(uploadImage).toHaveBeenCalledWith(expect.any(Buffer), "image/png");
+    expect(txGeneration.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { status: "completed", generatedImageUrl: GEN_URL } }),
+    );
     expect(consumeOneCredit).toHaveBeenCalledTimes(1);
+  });
+
+  it("when the Cloudinary upload rejects, returns pending without consuming a credit", async () => {
+    generation.findUnique.mockResolvedValue({ id: "g1", userId: "u1", status: "pending", providerJobId: "t1" });
+    vi.mocked(provider.getJob).mockResolvedValue({ status: "completed", imageUrl: "https://cdn/out.png" });
+    vi.mocked(uploadImage).mockRejectedValue(new Error("cloudinary down"));
+    const res = await pollGeneration({ userId: "u1", id: "g1" });
+    expect(res).toEqual({ status: "pending" });
+    expect(consumeOneCredit).not.toHaveBeenCalled();
   });
 
   it("a second poll of a completed row returns the stored result without consuming again", async () => {
     generation.findUnique.mockResolvedValue({
-      id: "g1", userId: "u1", status: "completed", generatedImageUrl: "/api/media/g1/generated",
+      id: "g1", userId: "u1", status: "completed", generatedImageUrl: GEN_URL,
     });
     const res = await pollGeneration({ userId: "u1", id: "g1" });
-    expect(res).toEqual({ status: "completed", generatedImageUrl: "/api/media/g1/generated", creditsRemaining: 2 });
+    expect(res).toEqual({ status: "completed", generatedImageUrl: GEN_URL, creditsRemaining: 2 });
     expect(consumeOneCredit).not.toHaveBeenCalled();
   });
 
@@ -90,7 +103,7 @@ describe("pollGeneration", () => {
     vi.mocked(provider.getJob).mockResolvedValue({ status: "completed", imageUrl: "https://cdn/out.png" });
     txGeneration.updateMany.mockResolvedValue({ count: 0 });
     const res = await pollGeneration({ userId: "u1", id: "g1" });
-    expect(res).toEqual({ status: "completed", generatedImageUrl: "/api/media/g1/generated", creditsRemaining: 2 });
+    expect(res).toEqual({ status: "completed", generatedImageUrl: GEN_URL, creditsRemaining: 2 });
     expect(consumeOneCredit).not.toHaveBeenCalled();
   });
 });

@@ -1,19 +1,42 @@
-import { redirect } from "next/navigation";
-import { requireUser } from "@/lib/auth/session";
-import { prisma } from "@/lib/db/client";
+"use client";
+import { useState } from "react";
+import { DashboardHeader } from "@/components/tool/DashboardHeader";
 import { ProductPhotoTool } from "@/components/tool/ProductPhotoTool";
+import { CreationsPanel } from "@/components/tool/CreationsPanel";
 
-export default async function AppPage() {
-  const sessionUser = await requireUser();
-  if (!sessionUser) redirect("/login");
+export function AppClient({
+  initialCredits, user,
+}: {
+  initialCredits: number;
+  user: { name: string | null; email: string };
+}) {
+  const [view, setView] = useState<"tool" | "creations">("tool");
 
-  // Layout and page render in parallel, so this path is also reachable with a
-  // stale cookie — use a safe lookup, never `findUniqueOrThrow` (see layout.tsx).
-  const user = await prisma.user.findUnique({
-    where: { id: sessionUser.id },
-    select: { name: true, email: true, credits: true },
-  });
-  if (!user) redirect("/api/auth/signout?callbackUrl=/login");
+  function handleMyCreations() {
+    setView("creations");
+  }
 
-  return <ProductPhotoTool initialCredits={user.credits} user={{ name: user.name, email: user.email }} />;
+  function handleBackToTool() {
+    setView("tool");
+  }
+
+  return (
+    <>
+      <DashboardHeader
+        name={user.name}
+        email={user.email}
+        credits={initialCredits}
+        onMyCreations={handleMyCreations}
+      />
+      <main className="mx-auto max-w-7xl px-6 py-10">
+        {view === "creations" ? (
+          <CreationsPanel onBack={handleBackToTool} />
+        ) : (
+          <ProductPhotoTool initialCredits={initialCredits} />
+        )}
+      </main>
+    </>
+  );
 }
+
+export default AppClient;

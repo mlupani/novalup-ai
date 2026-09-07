@@ -1,22 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { generation, storage } = vi.hoisted(() => ({
+const { generation } = vi.hoisted(() => ({
   generation: { create: vi.fn(), update: vi.fn(), findFirst: vi.fn(), updateMany: vi.fn() },
-  storage: { put: vi.fn() },
 }));
 vi.mock("@/lib/db/client", () => ({ prisma: { generation } }));
 vi.mock("@/lib/credits/service", () => ({ getCredits: vi.fn() }));
-vi.mock("@/lib/storage/index", () => ({
-  storage,
-  mediaKey: (id: string, k: string, e: string) => `${id}/${k}.${e}`,
-  mediaApiUrl: (id: string, k: string) => `/api/media/${id}/${k}`,
-}));
-vi.mock("@/lib/ai/product-photo-provider", () => ({ provider: { uploadImages: vi.fn(), createJob: vi.fn() } }));
+vi.mock("@/lib/storage/cloudinary", () => ({ uploadImages: vi.fn() }));
+vi.mock("@/lib/ai/product-photo-provider", () => ({ provider: { createJob: vi.fn() } }));
 
 import { createBatch } from "@/lib/generations/create";
 import { getCredits } from "@/lib/credits/service";
+import { uploadImages } from "@/lib/storage/cloudinary";
 import { provider } from "@/lib/ai/product-photo-provider";
 import type { FormatId, StyleId, BackgroundId } from "@/lib/ai/options";
+
+const REF_URL = "https://res.cloudinary.com/duz1soadb/image/upload/v1/product-photos/r0.png";
 
 const baseArgs = {
   userId: "u1",
@@ -30,14 +28,13 @@ const baseArgs = {
 
 beforeEach(() => {
   Object.values(generation).forEach((f) => f.mockReset());
-  storage.put.mockReset().mockResolvedValue({ url: "k" });
   generation.findFirst.mockResolvedValue(null);
   generation.updateMany.mockResolvedValue({ count: 0 });
   let n = 0;
   generation.create.mockImplementation(() => Promise.resolve({ id: `g${++n}` }));
   generation.update.mockResolvedValue({});
   vi.mocked(getCredits).mockResolvedValue(3);
-  vi.mocked(provider.uploadImages).mockReset().mockResolvedValue(["https://cdn/r0.png"]);
+  vi.mocked(uploadImages).mockReset().mockResolvedValue([REF_URL]);
   vi.mocked(provider.createJob).mockReset().mockResolvedValue({ jobId: "task" });
 });
 
@@ -69,19 +66,29 @@ describe("createBatch", () => {
     vi.mocked(getCredits).mockResolvedValue(2);
     expect(await createBatch(baseArgs)).toEqual({ ok: false, code: "NO_CREDITS", needed: 3, available: 2 });
     expect(generation.create).not.toHaveBeenCalled();
-    expect(provider.uploadImages).not.toHaveBeenCalled();
+    expect(uploadImages).not.toHaveBeenCalled();
   });
 
   it("uploads references once, starts 3 jobs, returns 3 ids in photo order", async () => {
     const res = await createBatch(baseArgs);
     expect(res).toEqual({ ok: true, ids: ["g1", "g2", "g3"] });
-    expect(provider.uploadImages).toHaveBeenCalledTimes(1);
+    expect(uploadImages).toHaveBeenCalledTimes(1);
     expect(provider.createJob).toHaveBeenCalledTimes(3);
     expect(generation.create).toHaveBeenCalledTimes(3);
   });
 
+  it("stores the Cloudinary reference urls on every row and sends them to the provider", async () => {
+    await createBatch(baseArgs);
+    expect(generation.create).toHaveBeenCalledWith(
+      expect.objectContaining({ data: expect.objectContaining({ referenceImageUrls: [REF_URL] }) }),
+    );
+    expect(provider.createJob).toHaveBeenCalledWith(
+      expect.objectContaining({ imageUrls: [REF_URL] }),
+    );
+  });
+
   it("returns PROVIDER_ERROR and creates nothing when reference upload throws", async () => {
-    vi.mocked(provider.uploadImages).mockRejectedValue(new Error("kie upload down"));
+    vi.mocked(uploadImages).mockRejectedValue(new Error("cloudinary down"));
     expect(await createBatch(baseArgs)).toEqual({ ok: false, code: "PROVIDER_ERROR" });
     expect(generation.create).not.toHaveBeenCalled();
   });

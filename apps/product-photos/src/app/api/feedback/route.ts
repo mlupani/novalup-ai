@@ -13,7 +13,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    await submitFeedback(parsed.data);
+    await submitFeedback({ email: user.email, message: parsed.data.message });
   } catch {
     return NextResponse.json({ error: "send_failed" }, { status: 502 });
   }

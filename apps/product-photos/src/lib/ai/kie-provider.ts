@@ -1,6 +1,4 @@
-import type { CreateJobInput, JobResult, ProductPhotoProvider, UploadImageInput } from "@/lib/ai/product-photo-provider";
-
-const UPLOAD_PATH = "product-photos/uploads";
+import type { CreateJobInput, JobResult, ProductPhotoProvider } from "@/lib/ai/product-photo-provider";
 
 export class KieProvider implements ProductPhotoProvider {
   private get key() {
@@ -10,9 +8,6 @@ export class KieProvider implements ProductPhotoProvider {
   }
   private get base() {
     return process.env.KIE_BASE_URL ?? "https://api.kie.ai";
-  }
-  private get uploadUrl() {
-    return process.env.KIE_UPLOAD_URL ?? "https://kieai.redpandaai.co/api/file-stream-upload";
   }
   private get model() {
     return process.env.KIE_MODEL ?? "nano-banana-2";
@@ -33,26 +28,6 @@ export class KieProvider implements ProductPhotoProvider {
       throw new Error(`Kie ${label} failed: code ${body.code} ${(body.msg ?? "").slice(0, 300)}`);
     }
     return body;
-  }
-
-  private async uploadOne(input: UploadImageInput): Promise<string> {
-    const form = new FormData();
-    form.append("file", new Blob([new Uint8Array(input.data)], { type: input.contentType }), input.fileName);
-    form.append("uploadPath", UPLOAD_PATH);
-    form.append("fileName", input.fileName);
-    const res = await fetch(this.uploadUrl, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${this.key}` },
-      body: form,
-    });
-    const body = await this.json(res, "upload");
-    const url = (body.data?.downloadUrl ?? body.data?.fileUrl) as string | undefined;
-    if (!url) throw new Error(`Kie upload returned no url: ${JSON.stringify(body).slice(0, 300)}`);
-    return url;
-  }
-
-  async uploadImages(images: UploadImageInput[]): Promise<string[]> {
-    return Promise.all(images.map((img) => this.uploadOne(img)));
   }
 
   async createJob({ imageUrls, prompt, aspectRatio }: CreateJobInput): Promise<{ jobId: string }> {

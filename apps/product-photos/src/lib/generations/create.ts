@@ -4,8 +4,7 @@ import { buildPrompt } from "@/lib/ai/prompt";
 import { formatToAspectRatio } from "@/lib/ai/options";
 import type { FormatId, StyleId, BackgroundId } from "@/lib/ai/options";
 import { provider } from "@/lib/ai/product-photo-provider";
-import { storage, mediaKey, mediaApiUrl } from "@/lib/storage/index";
-import { contentTypeToExt } from "@/lib/validation/upload";
+import { uploadImages } from "@/lib/storage/cloudinary";
 
 const STALE_MS = 5 * 60 * 1000;
 
@@ -43,22 +42,22 @@ export async function createBatch(args: {
     return { ok: false, code: "NO_CREDITS", needed: photos.length, available };
   }
 
-  // 4. Upload the shared reference images once (reused by every photo's job).
+  // 4. Upload the shared reference images once to Cloudinary. The returned URLs
+  //    are both stored on every row and passed to the provider as `image_input`.
   let imageUrls: string[];
   try {
-    imageUrls = await provider.uploadImages(
-      referenceImages.map((img, i) => ({
-        data: img.data,
-        contentType: img.contentType,
-        fileName: `reference-${i}.${contentTypeToExt(img.contentType)}`,
-      })),
+    imageUrls = await uploadImages(
+      referenceImages.map((img) => ({ data: img.data, contentType: img.contentType })),
     );
-  } catch {
-    return { ok: false, code: "PROVIDER_ERROR" }; // nothing created yet
+  } catch (err) {
+    // Nothing is created yet, so the failure leaves no row to record it on —
+    // without this the caller only ever sees an opaque 502.
+    console.error("[createBatch] reference image upload failed:", err);
+    return { ok: false, code: "PROVIDER_ERROR" };
   }
 
   // 5. One unit per photo, kicked off in parallel. Each creates its row first
-  //    (so it always resolves with an id), then does storage + job in a try;
+  //    (so it always resolves with an id), then starts the job in a try;
   //    a per-photo failure marks only that row failed.
   const startPhoto = async (photo: {
     format: FormatId;
@@ -71,7 +70,7 @@ export async function createBatch(args: {
     const gen = await prisma.generation.create({
       data: {
         userId,
-        referenceImageUrls: [],
+        referenceImageUrls: imageUrls,
         format: photo.format,
         style: photo.style,
         background: photo.background,
@@ -83,19 +82,6 @@ export async function createBatch(args: {
 
     try {
       if (!aspectRatio) throw new Error("invalid format"); // guarded earlier by zod
-      const urls: string[] = [];
-      for (let i = 0; i < referenceImages.length; i++) {
-        const kind = i === 0 ? "reference-0" : "reference-1";
-        const ext = contentTypeToExt(referenceImages[i].contentType);
-        await storage.put(
-          mediaKey(gen.id, kind, ext),
-          referenceImages[i].data,
-          referenceImages[i].contentType,
-        );
-        urls.push(mediaApiUrl(gen.id, kind));
-      }
-      await prisma.generation.update({ where: { id: gen.id }, data: { referenceImageUrls: urls } });
-
       const { jobId } = await provider.createJob({ imageUrls, prompt, aspectRatio });
       await prisma.generation.update({ where: { id: gen.id }, data: { providerJobId: jobId } });
     } catch (err) {

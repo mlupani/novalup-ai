@@ -60,8 +60,8 @@ model Generation {
   id                String           @id @default(cuid())
   userId            String
   user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  referenceImageUrls String[]        @default([]) // /api/media/<id>/reference-0[,-1]
-  generatedImageUrl String?          // e.g. /api/media/<id>/generated
+  referenceImageUrls String[]        @default([]) // Cloudinary secure URLs (shared across a batch)
+  generatedImageUrl String?          // Cloudinary secure URL
   format            String           // "1:1" | "4:5" | "9:16" | "16:9"
   style             String           // studio | lifestyle | luxury | minimal | social-media
   background        String           // clean | premium | natural | custom

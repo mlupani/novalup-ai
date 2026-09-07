@@ -5,6 +5,32 @@ import { assertValidImage } from "@/lib/validation/upload";
 import { MAX_REFERENCE_IMAGES } from "@/lib/limits";
 import { createBatch } from "@/lib/generations/create";
 import type { FormatId, StyleId, BackgroundId } from "@/lib/ai/options";
+import { prisma } from "@/lib/db/client";
+
+export async function GET(_request: Request) {
+  const user = await requireUser();
+  if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+  const generations = await prisma.generation.findMany({
+    where: { userId: user.id },
+    select: {
+      id: true,
+      generatedImageUrl: true,
+      referenceImageUrls: true,
+      format: true,
+      style: true,
+      background: true,
+      instructions: true,
+      prompt: true,
+      status: true,
+      error: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return NextResponse.json({ generations });
+}
 
 export async function POST(request: Request) {
   const user = await requireUser();

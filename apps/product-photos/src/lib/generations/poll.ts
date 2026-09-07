@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db/client";
 import { provider } from "@/lib/ai/product-photo-provider";
 import { consumeOneCredit, getCredits } from "@/lib/credits/service";
-import { storage, mediaKey, mediaApiUrl } from "@/lib/storage/index";
+import { uploadImage } from "@/lib/storage/cloudinary";
 
 export type PollResult =
   | { code: "NOT_FOUND" }
@@ -17,7 +17,7 @@ export async function pollGeneration(args: { userId: string; id: string }): Prom
   if (row.status === "completed") {
     return {
       status: "completed",
-      generatedImageUrl: row.generatedImageUrl ?? mediaApiUrl(id, "generated"),
+      generatedImageUrl: row.generatedImageUrl ?? "",
       creditsRemaining: await getCredits(userId),
     };
   }
@@ -39,13 +39,13 @@ export async function pollGeneration(args: { userId: string; id: string }): Prom
       return { status: "failed", error: job.error };
     }
 
-    // completed — download and persist the image before touching credits
+    // completed — download from the provider and re-host on Cloudinary before
+    // touching credits
     const res = await fetch(job.imageUrl);
     if (!res.ok) return { status: "pending" }; // transient; try again next poll
     const buf = Buffer.from(await res.arrayBuffer());
-    await storage.put(mediaKey(id, "generated", "png"), buf, "image/png");
+    const { url: generatedImageUrl } = await uploadImage(buf, "image/png");
 
-    const generatedImageUrl = mediaApiUrl(id, "generated");
     await prisma.$transaction(async (tx) => {
       const claimed = await tx.generation.updateMany({
         where: { id, status: "pending" },

@@ -5,7 +5,6 @@ const OLD = { ...process.env };
 beforeEach(() => {
   process.env.KIE_API_KEY = "test-key";
   process.env.KIE_BASE_URL = "https://api.kie.ai";
-  process.env.KIE_UPLOAD_URL = "https://up.example/api/file-stream-upload";
 });
 afterEach(() => {
   process.env = { ...OLD };
@@ -23,20 +22,6 @@ describe("KieProvider.createJob", () => {
     await expect(
       p.createJob({ imageUrls: ["https://cdn/a.png"], prompt: "p", aspectRatio: "1:1" }),
     ).rejects.toThrow(/KIE_API_KEY/);
-  });
-});
-
-describe("KieProvider.uploadImages", () => {
-  it("uploads each image and returns urls in order", async () => {
-    const fetchMock = vi.spyOn(global, "fetch")
-      .mockResolvedValueOnce(jsonResponse({ success: true, data: { downloadUrl: "https://cdn/a.png" } }))
-      .mockResolvedValueOnce(jsonResponse({ success: true, data: { downloadUrl: "https://cdn/b.png" } }));
-    const urls = await new KieProvider().uploadImages([
-      { data: Buffer.from("a"), contentType: "image/png", fileName: "a.png" },
-      { data: Buffer.from("b"), contentType: "image/png", fileName: "b.png" },
-    ]);
-    expect(urls).toEqual(["https://cdn/a.png", "https://cdn/b.png"]);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
 

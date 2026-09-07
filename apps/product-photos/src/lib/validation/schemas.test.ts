@@ -14,8 +14,20 @@ describe("signupSchema", () => {
 });
 
 describe("feedbackSchema", () => {
-  it("requires all four fields", () => {
-    expect(feedbackSchema.safeParse({ name: "Ana", email: "a@b.com", thoughts: "", nextIdeas: "x" }).success).toBe(false);
+  it("accepts a non-empty message", () => {
+    expect(feedbackSchema.safeParse({ message: "me encantó" }).success).toBe(true);
+  });
+  it("rejects a missing or whitespace-only message", () => {
+    expect(feedbackSchema.safeParse({}).success).toBe(false);
+    expect(feedbackSchema.safeParse({ message: "   " }).success).toBe(false);
+  });
+  it("rejects a message longer than 2000 characters", () => {
+    expect(feedbackSchema.safeParse({ message: "x".repeat(2001) }).success).toBe(false);
+  });
+  it("ignores any extra fields such as a client-supplied email", () => {
+    const r = feedbackSchema.safeParse({ message: "hola", email: "spoof@evil.com" });
+    expect(r.success).toBe(true);
+    expect(r.success && r.data).toEqual({ message: "hola" });
   });
 });
 
