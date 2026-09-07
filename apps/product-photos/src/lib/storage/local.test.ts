@@ -11,8 +11,8 @@ afterEach(async () => { await rm(dir, { recursive: true, force: true }); });
 describe("LocalStorage", () => {
   it("round-trips a buffer with its content type", async () => {
     const s = new LocalStorage(dir);
-    await s.put("gen1/original.png", Buffer.from("hello"), "image/png");
-    const got = await s.read("gen1/original.png");
+    await s.put("gen1/generated.png", Buffer.from("hello"), "image/png");
+    const got = await s.read("gen1/generated.png");
     expect(got.data.toString()).toBe("hello");
     expect(got.contentType).toBe("image/png");
   });

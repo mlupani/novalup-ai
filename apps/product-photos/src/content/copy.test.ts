@@ -6,7 +6,9 @@ describe("copy", () => {
     expect(copy.credits.freeLabel(3)).toBe("3 créditos gratis");
     expect(copy.credits.remainingLabel(2)).toBe("2 créditos restantes");
   });
-  it("formats the credit-used line with the remaining count", () => {
-    expect(copy.tool.creditUsed(1)).toContain("Te quedan 1");
+  it("keeps batch strings grammatical for a batch of one", () => {
+    expect(copy.tool.creatingBatch(0, 1)).toBe("Creando tu foto… 0 de 1 lista");
+    expect(copy.tool.batchSummary(1, 2)).toBe("1 foto · 1 crédito usado · te quedan 2");
+    expect(copy.tool.generateN(1)).toBe("Generar foto");
   });
 });

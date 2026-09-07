@@ -7,20 +7,17 @@ export interface Storage {
 
 export const storage: Storage = new LocalStorage(process.env.STORAGE_DIR ?? "./.data");
 
-export function mediaKey(
-  generationId: string,
-  kind: "original" | "generated" | "reference-0" | "reference-1",
-  ext: string,
-): string {
+export type MediaKind = "generated" | "reference-0" | "reference-1";
+
+export function mediaKey(generationId: string, kind: MediaKind, ext: string): string {
   return `${generationId}/${kind}.${ext}`;
 }
 
-export function mediaApiUrl(generationId: string, kind: "original" | "generated" | "reference-0" | "reference-1"): string {
+export function mediaApiUrl(generationId: string, kind: MediaKind): string {
   return `/api/media/${generationId}/${kind}`;
 }
 
-const EXT_BY_KIND: Record<"original" | "generated" | "reference-0" | "reference-1", string[]> = {
-  original: ["jpg", "jpeg", "png", "webp"],
+const EXT_BY_KIND: Record<MediaKind, string[]> = {
   generated: ["png"],
   "reference-0": ["jpg", "jpeg", "png", "webp"],
   "reference-1": ["jpg", "jpeg", "png", "webp"],
@@ -28,7 +25,7 @@ const EXT_BY_KIND: Record<"original" | "generated" | "reference-0" | "reference-
 
 export async function readMedia(
   generationId: string,
-  kind: "original" | "generated" | "reference-0" | "reference-1",
+  kind: MediaKind,
 ): Promise<{ data: Buffer; contentType: string } | null> {
   // Defense in depth: `generationId` reaches `join(root, key)` — reject anything
   // that is not a bare cuid so a crafted id can never traverse out of the root.

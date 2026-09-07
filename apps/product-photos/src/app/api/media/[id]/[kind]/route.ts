@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/client";
 import { requireUser } from "@/lib/auth/session";
-import { readMedia } from "@/lib/storage/index";
+import { readMedia, type MediaKind } from "@/lib/storage/index";
 
-const KINDS = new Set(["original", "generated", "reference-0", "reference-1"]);
+const KINDS: ReadonlySet<string> = new Set<MediaKind>(["generated", "reference-0", "reference-1"]);
+
+function isMediaKind(kind: string): kind is MediaKind {
+  return KINDS.has(kind);
+}
 
 export async function GET(
   request: Request,
@@ -13,7 +17,7 @@ export async function GET(
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const { id, kind } = await ctx.params;
-  if (!KINDS.has(kind)) return new NextResponse(null, { status: 404 });
+  if (!isMediaKind(kind)) return new NextResponse(null, { status: 404 });
 
   const generation = await prisma.generation.findUnique({
     where: { id },
@@ -23,7 +27,7 @@ export async function GET(
     return new NextResponse(null, { status: 404 });
   }
 
-  const file = await readMedia(id, kind as "original" | "generated" | "reference-0" | "reference-1");
+  const file = await readMedia(id, kind);
   if (!file) return new NextResponse(null, { status: 404 });
 
   const headers = new Headers({

@@ -23,8 +23,13 @@ beforeEach(() => { requireUser.mockResolvedValue({ id: "u1", email: "a@b.com", n
 describe("GET /api/media/:id/:kind", () => {
   it("404s when the generation belongs to another user", async () => {
     findUnique.mockResolvedValue({ id: "g1", userId: "someone-else" });
+    const res = await GET(new Request("http://x/api/media/g1/generated"), ctx("g1", "generated"));
+    expect(res.status).toBe(404);
+  });
+  it("404s an unknown media kind before any DB lookup", async () => {
     const res = await GET(new Request("http://x/api/media/g1/original"), ctx("g1", "original"));
     expect(res.status).toBe(404);
+    expect(findUnique).not.toHaveBeenCalled();
   });
   it("streams bytes for the owner", async () => {
     findUnique.mockResolvedValue({ id: "g1", userId: "u1" });
