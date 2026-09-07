@@ -17,7 +17,13 @@ export function useGeneration(opts?: { pollIntervalMs?: number }) {
     if (timer.current) { clearInterval(timer.current); timer.current = null; }
   }, []);
 
-  useEffect(() => () => { active.current = false; stop(); }, [stop]);
+  useEffect(() => {
+    active.current = true;
+    return () => {
+      active.current = false;
+      stop();
+    };
+  }, [stop]);
 
   const reset = useCallback(() => {
     stop();
