@@ -1,0 +1,61 @@
+# Novalup AI — Product Photos MVP local stack.
+#
+#   cp .env.example .env     # then fill NEXTAUTH_SECRET, GOOGLE_*, KIE_API_KEY, FORMSUBMIT_EMAIL
+#   docker compose up --build
+#
+# Postgres starts first and must report healthy before `product-photos` boots;
+# the app container then runs `prisma migrate deploy` and serves http://localhost:3000.
+#
+# apps/web (the marketing site) is intentionally NOT part of this stack —
+# run it separately with `pnpm --filter web dev`.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-novalup}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-novalup}
+      POSTGRES_DB: ${POSTGRES_DB:-product_photos}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-novalup} -d ${POSTGRES_DB:-product_photos}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  product-photos:
+    build:
+      context: .
+      dockerfile: apps/product-photos/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Compose network host is "postgres"; this overrides the .env DATABASE_URL,
+      # which points at localhost for `pnpm dev` against `docker compose up postgres`.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-novalup}:${POSTGRES_PASSWORD:-novalup}@postgres:5432/${POSTGRES_DB:-product_photos}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      AUTH_TRUST_HOST: "true"
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      KIE_API_KEY: ${KIE_API_KEY}
+      KIE_BASE_URL: ${KIE_BASE_URL:-https://api.kie.ai}
+      KIE_UPLOAD_URL: ${KIE_UPLOAD_URL:-https://kieai.redpandaai.co/api/file-stream-upload}
+      KIE_MODEL: ${KIE_MODEL:-nano-banana-2}
+      KIE_RESOLUTION: ${KIE_RESOLUTION:-2K}
+      FORMSUBMIT_EMAIL: ${FORMSUBMIT_EMAIL}
+      FREE_CREDITS: ${FREE_CREDITS:-3}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      STORAGE_DIR: /data
+    ports:
+      - "3000:3000"
+    volumes:
+      - media:/data
+
+volumes:
+  pgdata: {}
+  media: {}
