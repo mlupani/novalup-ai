@@ -1,0 +1,102 @@
+# Novalup AI — production stack, fronted by an EXISTING shared Traefik.
+#
+# Prerequisites on the host:
+#   - Traefik already running, attached to an external Docker network named "web"
+#   - a "websecure" (443) entrypoint and a "letsencrypt" certresolver configured
+#   - Traefik (or your base setup) redirects :80 -> :443 globally
+#
+# Deploy / redeploy:
+#   git pull
+#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+#
+# Routing:
+#   ai.novaluptech.com     -> web            (marketing site, :3100)
+#   photos.novaluptech.com -> product-photos (the app, :3000) + its Postgres
+#
+# Postgres runs on a private network with no host port. Back it up with a
+# pg_dump cron against the container (see README).
+
+name: novalup-prod
+
+networks:
+  web:
+    external: true
+  internal:
+    driver: bridge
+
+volumes:
+  pgdata:
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  product-photos:
+    build:
+      context: .
+      dockerfile: apps/product-photos/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Compose network host is "postgres"; assembled from the POSTGRES_* vars.
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-https://photos.novaluptech.com}
+      AUTH_TRUST_HOST: "true"
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      KIE_API_KEY: ${KIE_API_KEY}
+      KIE_BASE_URL: ${KIE_BASE_URL:-https://api.kie.ai}
+      KIE_MODEL: ${KIE_MODEL:-nano-banana-2}
+      KIE_RESOLUTION: ${KIE_RESOLUTION:-2K}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-duz1soadb}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      CLOUDINARY_FOLDER: ${CLOUDINARY_FOLDER:-product-photos}
+      FORMSUBMIT_EMAIL: ${FORMSUBMIT_EMAIL}
+      FREE_CREDITS: ${FREE_CREDITS:-3}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+    networks:
+      - web
+      - internal
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=web
+      - traefik.http.routers.novalup-photos.rule=Host(`photos.novaluptech.com`)
+      - traefik.http.routers.novalup-photos.entrypoints=websecure
+      - traefik.http.routers.novalup-photos.tls.certresolver=letsencrypt
+      - traefik.http.services.novalup-photos.loadbalancer.server.port=3000
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # Inlined into the web bundle at build time (see apps/web/Dockerfile).
+        NEXT_PUBLIC_PRODUCT_PHOTOS_URL: ${NEXT_PUBLIC_PRODUCT_PHOTOS_URL:-https://photos.novaluptech.com}
+    restart: unless-stopped
+    networks:
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=web
+      - traefik.http.routers.novalup-web.rule=Host(`ai.novaluptech.com`)
+      - traefik.http.routers.novalup-web.entrypoints=websecure
+      - traefik.http.routers.novalup-web.tls.certresolver=letsencrypt
+      - traefik.http.services.novalup-web.loadbalancer.server.port=3100

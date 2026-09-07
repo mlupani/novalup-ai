@@ -19,6 +19,7 @@ apps/product-photos/.data
 # Secrets and local env — the image gets its env from docker-compose.
 **/.env
 **/.env.*.local
+**/.env.production
 
 # Logs, VCS, editor, OS cruft.
 **/*.log
@@ -28,7 +29,6 @@ apps/product-photos/.data
 **/.DS_Store
 **/*.pem
 
-# Not needed to build the product-photos app.
-apps/web
+# Not needed by any image build.
 docs
 .superpowers

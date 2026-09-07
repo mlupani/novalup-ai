@@ -37,6 +37,50 @@ pnpm dev:photos        # http://localhost:3000
 pnpm dev:web           # http://localhost:3100
 ```
 
+## Deploy to production
+
+Production runs behind an **existing shared Traefik** on the host — an external
+Docker network `web`, a `websecure` (443) entrypoint, and a `letsencrypt`
+certresolver. `docker-compose.prod.yml` only attaches routers to it.
+
+- `ai.novaluptech.com` → `web` (marketing site)
+- `photos.novaluptech.com` → `product-photos` (the app) + a container Postgres
+  (`pgdata` volume, no host port)
+
+### One-time setup
+
+1. **DNS:** point `A` records `ai` and `photos` (under `novaluptech.com`) at the server IP.
+2. **Google OAuth:** in Google Cloud Console, on the Web OAuth client, add
+   - Authorized redirect URI: `https://photos.novaluptech.com/api/auth/callback/google`
+   - Authorized JavaScript origin: `https://photos.novaluptech.com`
+3. **Env:** on the server, `cp .env.production.example .env.production` and fill it in.
+   Regenerate `NEXTAUTH_SECRET` (`openssl rand -base64 32`) and set a strong
+   `POSTGRES_PASSWORD`. `.env.production` is gitignored — it lives only on the server.
+
+### Deploy / redeploy
+
+```bash
+git pull
+docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+```
+
+Images build on the server. Migrations (`prisma migrate deploy`) run automatically
+when the `product-photos` container starts.
+
+### After the first deploy
+
+- Check HTTPS and a valid cert on both hosts.
+- Sign in with Google end to end, then run one generation.
+- Submit feedback once and click the FormSubmit activation email (delivery stays
+  off until you do).
+
+### Postgres backups
+
+```bash
+docker compose -f docker-compose.prod.yml exec -T postgres \
+  pg_dump -U novalup product_photos | gzip > backup-$(date +%F).sql.gz
+```
+
 ## Tests
 
 `pnpm --filter product-photos test`
