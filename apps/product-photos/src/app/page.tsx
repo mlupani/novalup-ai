@@ -1,5 +1,5 @@
-import copy from "@/content/copy";
+import { LandingHero } from "@/components/landing/LandingHero";
 
 export default function LandingPage() {
-  return <main className="p-10">{copy.landing.headline}</main>;
+  return <LandingHero />;
 }
