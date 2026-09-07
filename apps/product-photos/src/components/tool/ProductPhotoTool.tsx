@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Uploader } from "@/components/tool/Uploader";
 import { OptionPicker, type OptionValue } from "@/components/tool/OptionPicker";
@@ -18,6 +18,10 @@ export function ProductPhotoTool({
   const [file, setFile] = useState<File | null>(null);
   const [options, setOptions] = useState<OptionValue>(EMPTY);
   const { state, result, error, start, reset } = useGeneration();
+
+  useEffect(() => {
+    if (state === "completed") router.refresh();
+  }, [state, router]);
 
   if (initialCredits <= 0 && state !== "completed") {
     return <OutOfCreditsCard name={user.name} email={user.email} />;
@@ -38,7 +42,6 @@ export function ProductPhotoTool({
       background: options.background,
       instructions: options.instructions,
     });
-    router.refresh();
   }
 
   if (state === "completed" && result) {
