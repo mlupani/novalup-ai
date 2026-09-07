@@ -187,26 +187,39 @@ Flow:
 4. **Upload references once** — `const imageUrls = await
    provider.uploadImages(referenceImages.map(…))`. On throw → mark
    nothing (no rows yet), return `{ ok: false, code: "PROVIDER_ERROR" }`.
-5. **Per photo** (sequential loop, or `Promise.all` — sequential is
-   simpler and 4 is small):
-   - `prompt = buildPrompt({ style, background, instructions })`
+5. **Per photo — kicked off in parallel** (`Promise.allSettled` over the N
+   photos; 4 concurrent Kie `createTask` POSTs is trivial load and shaves
+   the pre-201 wait to ~1s). For each photo, a `startPhoto(photo, index)`
+   async unit does:
+   - `const aspectRatio = formatToAspectRatio(photo.format)`
+   - `prompt = buildPrompt({ style: photo.style, background:
+     photo.background, instructions })`
    - `const gen = await prisma.generation.create({ data: { userId,
-     referenceImageUrls: [], format, style, background,
-     instructions: instructions ?? null, prompt, status: "pending" } })`
-   - store each reference image:
-     `storage.put(mediaKey(gen.id, "reference-0", ext0), buf0, ct0)`,
-     and `reference-1` if present
-   - `prisma.generation.update({ where: { id: gen.id }, data: {
-     referenceImageUrls: [mediaApiUrl(gen.id, "reference-0"),
-     …(mediaApiUrl(gen.id, "reference-1") if 2)] } })`
-   - `try { const { jobId } = await provider.createJob({ imageUrls,
-     prompt, aspectRatio }); await prisma.generation.update({ where:
-     { id: gen.id }, data: { providerJobId: jobId } }); } catch (e)
-     { await prisma.generation.update({ where: { id: gen.id }, data:
-     { status: "failed", error: <msg> } }); }`  — a per-photo provider
-     failure fails **only that row**; the rest of the batch proceeds.
-   - collect `gen.id` into `ids`
-6. Return `{ ok: true, ids }`. (Even if some rows are already `failed` at
+     referenceImageUrls: [], format: photo.format, style: photo.style,
+     background: photo.background, instructions: instructions ?? null,
+     prompt, status: "pending" } })`
+   - `try { ` — store each reference image
+     (`storage.put(mediaKey(gen.id, "reference-0", ext0), buf0, ct0)`, and
+     `reference-1` if present), then `prisma.generation.update({ where:
+     { id: gen.id }, data: { referenceImageUrls: [mediaApiUrl(gen.id,
+     "reference-0"), …(mediaApiUrl(gen.id, "reference-1") if 2)] } })`,
+     then `const { jobId } = await provider.createJob({ imageUrls,
+     prompt, aspectRatio })` and `prisma.generation.update({ where: { id:
+     gen.id }, data: { providerJobId: jobId } })`
+   - ` } catch (e) { await prisma.generation.update({ where: { id:
+     gen.id }, data: { status: "failed", error: <msg> } }); }` — a
+     per-photo storage/provider failure fails **only that row**
+   - the unit resolves with `gen.id` (whether the row ended `pending` or
+     `failed`)
+   Run all N units via `Promise.allSettled`; `ids` is the resolved
+   `gen.id` list **in photo order** (each unit created its row before it
+   could throw, so every unit resolves with an id — a rejection here means
+   `prisma.generation.create` itself threw, which is an infra failure:
+   see step 6).
+6. If **every** unit rejected (all `generation.create` calls threw —
+   DB down): return `{ ok: false, code: "PROVIDER_ERROR" }` (no rows to
+   report). Otherwise return `{ ok: true, ids }` with the ids of the
+   units that resolved. (Rows that ended `failed` at
    step 5 — the client polls all ids and renders per-photo status.)
 
 **Partial-failure semantics:** the credit gate guarantees `credits >=
@@ -215,8 +228,8 @@ successful completion (in `poll.ts`, unchanged). If K of N fail, the
 user is charged for N−K and gets N−K images plus K "failed" tiles.
 
 The wider try/catch around `storage.put` + the reference `update`
-(the F1-derived hardening) stays: any infra throw inside the per-photo
-block marks that row `failed` and the loop continues.
+(the F1-derived hardening) stays: any infra throw inside a per-photo unit
+marks that row `failed` and the other units are unaffected (`allSettled`).
 
 ### `poll.ts` — unchanged
 
@@ -345,9 +358,13 @@ Vitest, following the existing `apps/product-photos` patterns
   - `credits < photos.length` → `{ ok:false, code:"NO_CREDITS", needed,
     available }` and **no** `generation.create` call
   - happy path: `photos.length === 3`, `credits === 3` → `uploadImages`
-    called **once**, `createJob` called 3×, 3 rows created, returns 3 ids
+    called **once**, `createJob` called 3× (order-independent —
+    `Promise.allSettled`), 3 rows created, returns 3 ids **in photo
+    order**
   - one `createJob` throws → that row updated to `failed`, the other rows
-    still created, still returns all 3 ids (`ok: true`)
+    still created + `pending`, still returns all 3 ids (`ok: true`)
+  - all `prisma.generation.create` calls throw → `{ ok:false,
+    code:"PROVIDER_ERROR" }`
 - **`poll.test.ts`** — unchanged (still valid; each id polled独立ly).
 - **`useBatchGeneration.test.ts`** (renamed from `useGeneration.test.ts`,
   `// @vitest-environment jsdom`, real timers, small `pollIntervalMs`):
@@ -408,4 +425,7 @@ suite grows.
   one — no separate single path); references are shared and 1–2; the
   batch is blocked (not partial) when `credits < N`; instructions are
   one shared value written to every row; no `batchId` column; the
-  per-id status endpoint and `poll.ts` do not change.
+  per-id status endpoint and `poll.ts` do not change; the N Kie tasks
+  are kicked off **in parallel** (`Promise.allSettled`) and the
+  generations themselves run concurrently on Kie — the results grid
+  fills in as each finishes.
