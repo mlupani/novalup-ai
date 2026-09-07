@@ -10,8 +10,8 @@
     "localeEn": "English"
   },
   "hero": {
-    "headline": "AI tools that actually do something.",
-    "subheadline": "Simple AI-powered tools built to solve real-world tasks in seconds.",
+    "headline": "AI tools to solve real tasks.",
+    "subheadline": "Pick a tool, do your task and get results in seconds. No complicated setup.",
     "ctaPrimary": "Explore tools",
     "ctaSecondary": "Try for free"
   },
@@ -20,42 +20,42 @@
     "rest": "Not AI demos."
   },
   "products": {
-    "heading": "Tools built to solve real problems.",
-    "subheading": "Explore our growing collection of AI-powered tools.",
+    "heading": "A tool for every task.",
+    "subheading": "A collection of AI tools designed to solve specific tasks, simply and quickly.",
     "statusAvailable": "Available",
     "statusComingSoon": "Coming soon",
     "items": {
       "product-photos": {
         "name": "AI Product Photos",
-        "description": "Turn ordinary product photos into professional images with AI.",
+        "description": "Turn a photo of your product into professional images ready to sell.",
         "cta": "Try Product Photos"
       },
       "cv-analyzer": {
         "name": "AI CV Analyzer",
-        "description": "Analyze your CV, discover weaknesses and improve your chances of getting interviews.",
+        "description": "Analyze your CV, discover ways to improve it and increase your chances of standing out.",
         "cta": "Try CV Analyzer"
       },
       "study-assistant": {
         "name": "AI Study Assistant",
-        "description": "Turn your notes into summaries, flashcards and practice exams.",
+        "description": "Turn your notes into summaries, questions and study material.",
         "cta": "Try Study Assistant"
       },
       "interview-simulator": {
         "name": "AI Interview Simulator",
-        "description": "Practice realistic job interviews and get instant feedback.",
-        "cta": "Try Interview Simulator"
+        "description": "Practice real interviews and get feedback to improve your answers.",
+        "cta": "Try Simulator"
       },
       "trading-analytics": {
-        "name": "Trading Analytics",
-        "description": "Analyze your trading history and discover patterns in your performance.",
+        "name": "AI Trading Analytics",
+        "description": "Analyze your trades and discover patterns to better understand your performance.",
         "cta": "Try Trading Analytics"
       }
     }
   },
   "showcase": {
     "eyebrow": "Featured tool",
-    "heading": "Turn a product photo into marketing content.",
-    "subheading": "Upload your product and let AI create professional visuals ready to use.",
+    "heading": "Turn a photo of your product into images ready to sell.",
+    "subheading": "Upload your product and let AI generate professional images for your store, social media and campaigns.",
     "cta": "Try Product Photos",
     "ui": {
       "window": "Novalup AI · Product Photos",
@@ -71,29 +71,29 @@
   },
   "howItWorks": {
     "heading": "How it works",
-    "subheading": "Three steps, no learning curve.",
+    "subheading": "Three steps. No complicated setup.",
     "step1Title": "Choose a tool",
-    "step1Body": "Open the AI tool you need.",
+    "step1Body": "Choose the tool you need to get your task done.",
     "step1Visual": "Product Photos",
     "step2Title": "Upload or describe",
-    "step2Body": "Give the tool the information it will work with.",
+    "step2Body": "Give the tool the information it needs to do the work.",
     "step2Visual": "Upload image",
-    "step3Title": "Get your result",
-    "step3Body": "Get a set of professional results in seconds.",
+    "step3Title": "Get the result",
+    "step3Body": "Get a ready-to-use result in seconds.",
     "step3Visual": "Ready"
   },
   "freeUsage": {
     "heading": "Try it before you pay.",
-    "body": "Every Novalup AI tool includes a free experience so you can see the result before committing.",
+    "body": "Every tool includes free credits so you can try it and see the result before deciding.",
     "cta": "Explore tools"
   },
   "about": {
-    "heading": "AI tools built around real problems.",
-    "body": "Novalup AI is a growing collection of practical AI tools designed to make everyday tasks faster, simpler and more accessible."
+    "heading": "Useful AI, without the complexity.",
+    "body": "Novalup AI brings together simple tools to solve specific tasks. Pick what you need, try it and get results."
   },
   "finalCta": {
-    "heading": "Find a tool. Create something useful.",
-    "subheading": "Explore Novalup AI and start creating.",
+    "heading": "Find the tool you need.",
+    "subheading": "Explore Novalup AI and start solving tasks with artificial intelligence.",
     "cta": "Explore tools"
   },
   "footer": {
@@ -124,7 +124,7 @@
     }
   },
   "metadata": {
-    "title": "Novalup AI — AI Tools That Actually Do Something",
+    "title": "Novalup AI — AI Tools to Solve Real Tasks",
     "description": "Practical AI tools for work, creativity, learning and everyday tasks."
   }
 }

@@ -29,13 +29,13 @@ function StepVisual({ step, label }: { step: number; label: string }) {
 
   return (
     <span className="flex items-center gap-3">
-      <span className="relative h-14 w-14 overflow-hidden rounded-lg border border-white/[0.08] bg-white">
+      <span className="relative h-14 w-14 overflow-hidden rounded-lg border border-white/[0.08] bg-night-card">
         <Image
           src="/images/featured-product/after.jpg"
           alt=""
           fill
           sizes="56px"
-          className="object-contain"
+          className="object-cover"
         />
       </span>
       <span className="flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-2.5 py-1 text-[10px] font-semibold text-neutral-300">

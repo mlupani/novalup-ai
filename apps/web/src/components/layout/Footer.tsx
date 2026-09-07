@@ -18,15 +18,30 @@ export function Footer() {
         </div>
 
         <nav className="flex flex-wrap gap-x-8 gap-y-3">
-          {FOOTER_LINKS.map((link) => (
-            <Link
-              key={link.key}
-              href={link.href}
-              className="text-sm font-medium text-neutral-400 transition-colors hover:text-white"
-            >
-              {t(link.key)}
-            </Link>
-          ))}
+          {FOOTER_LINKS.map((link) => {
+            const linkClassName =
+              "text-sm font-medium text-neutral-400 transition-colors hover:text-white";
+
+            if (link.href.startsWith("http")) {
+              return (
+                <a
+                  key={link.key}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkClassName}
+                >
+                  {t(link.key)}
+                </a>
+              );
+            }
+
+            return (
+              <Link key={link.key} href={link.href} className={linkClassName}>
+                {t(link.key)}
+              </Link>
+            );
+          })}
         </nav>
       </Container>
     </footer>

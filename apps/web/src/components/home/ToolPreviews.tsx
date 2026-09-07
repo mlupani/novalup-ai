@@ -86,14 +86,14 @@ export function ProductPhotosPreview({
         </div>
         <ArrowRight size={12} className="shrink-0 self-center text-neutral-600" />
         <div
-          className={`relative flex-1 overflow-hidden rounded-lg border border-accent/25 bg-white ${thumb}`}
+          className={`relative flex-1 overflow-hidden rounded-lg border border-accent/25 bg-night-card ${thumb}`}
         >
           <Image
             src={AFTER_SRC}
             alt=""
             fill
             sizes="200px"
-            className="object-contain"
+            className="object-cover"
           />
         </div>
       </div>

@@ -11,8 +11,8 @@ export const NAV_LINKS = [
 
 export const FOOTER_LINKS = [
   { key: "products", href: "/#products" },
-  { key: "about", href: "/#about" },
+  { key: "about", href: "https://novaluptech.com/nosotros" },
   { key: "terms", href: "/terms" },
   { key: "privacy", href: "/privacy" },
-  { key: "contact", href: "/contact" },
+  { key: "contact", href: "https://novaluptech.com/agendar" },
 ] as const;

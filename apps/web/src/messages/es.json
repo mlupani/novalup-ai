@@ -10,8 +10,8 @@
     "localeEn": "English"
   },
   "hero": {
-    "headline": "Herramientas de IA que realmente hacen algo.",
-    "subheadline": "Herramientas simples con inteligencia artificial, creadas para resolver tareas reales en segundos.",
+    "headline": "Herramientas de IA para resolver tareas reales.",
+    "subheadline": "Elegí una herramienta, hacé tu tarea y obtené resultados en segundos. Sin configuraciones complicadas.",
     "ctaPrimary": "Explorar herramientas",
     "ctaSecondary": "Probar gratis"
   },
@@ -20,45 +20,45 @@
     "rest": "No para demos de IA."
   },
   "products": {
-    "heading": "Herramientas creadas para resolver problemas reales.",
-    "subheading": "Explorá nuestra colección de herramientas con inteligencia artificial, en constante crecimiento.",
+    "heading": "Una herramienta para cada tarea.",
+    "subheading": "Una colección de herramientas de IA diseñadas para resolver tareas específicas de forma simple y rápida.",
     "statusAvailable": "Disponible",
     "statusComingSoon": "Próximamente",
     "items": {
       "product-photos": {
-        "name": "Fotos de Producto con IA",
-        "description": "Convertí fotos comunes de tus productos en imágenes profesionales con IA.",
-        "cta": "Probar Fotos de Producto"
+        "name": "Foto de Producto con IA",
+        "description": "Convertí una foto de tu producto en imágenes profesionales listas para vender.",
+        "cta": "Probar Foto de Producto"
       },
       "cv-analyzer": {
         "name": "Analizador de CV con IA",
-        "description": "Analizá tu CV, descubrí puntos débiles y mejorá tus chances de conseguir entrevistas.",
+        "description": "Analizá tu CV, descubrí oportunidades de mejora y aumentá tus posibilidades de destacar.",
         "cta": "Probar Analizador de CV"
       },
       "study-assistant": {
         "name": "Asistente de Estudio con IA",
-        "description": "Convertí tus apuntes en resúmenes, tarjetas de estudio y exámenes de práctica.",
+        "description": "Convertí tus apuntes en resúmenes, preguntas y material para estudiar.",
         "cta": "Probar Asistente de Estudio"
       },
       "interview-simulator": {
         "name": "Simulador de Entrevistas con IA",
-        "description": "Practicá entrevistas laborales realistas y recibí feedback al instante.",
-        "cta": "Probar Simulador de Entrevistas"
+        "description": "Practicá entrevistas reales y recibí feedback para mejorar tus respuestas.",
+        "cta": "Probar Simulador"
       },
       "trading-analytics": {
-        "name": "Analítica de Trading",
-        "description": "Analizá tu historial de trading y descubrí patrones en tu rendimiento.",
+        "name": "Analítica de Trading con IA",
+        "description": "Analizá tus operaciones y descubrí patrones para entender mejor tu rendimiento.",
         "cta": "Probar Analítica de Trading"
       }
     }
   },
   "showcase": {
     "eyebrow": "Herramienta destacada",
-    "heading": "Convertí la foto de tu producto en contenido para vender.",
-    "subheading": "Subí tu producto y dejá que la IA genere imágenes profesionales listas para usar.",
-    "cta": "Probar Fotos de Producto",
+    "heading": "Convertí una foto de tu producto en imágenes listas para vender.",
+    "subheading": "Subí tu producto y dejá que la IA genere imágenes profesionales para tu tienda, redes sociales y campañas.",
+    "cta": "Probar Foto de Producto",
     "ui": {
-      "window": "Novalup AI · Fotos de Producto",
+      "window": "Novalup AI · Foto de Producto",
       "original": "Original",
       "style": "Estilo",
       "styleStudio": "Estudio",
@@ -71,29 +71,29 @@
   },
   "howItWorks": {
     "heading": "Cómo funciona",
-    "subheading": "Tres pasos, sin curva de aprendizaje.",
+    "subheading": "Tres pasos. Sin configuraciones complicadas.",
     "step1Title": "Elegí una herramienta",
-    "step1Body": "Entrá a la herramienta de IA que necesitás.",
-    "step1Visual": "Fotos de Producto",
+    "step1Body": "Elegí la herramienta que necesitás para resolver tu tarea.",
+    "step1Visual": "Foto de Producto",
     "step2Title": "Subí o describí",
-    "step2Body": "Dale a la herramienta la información con la que va a trabajar.",
+    "step2Body": "Dale a la herramienta la información que necesita para trabajar.",
     "step2Visual": "Subir imagen",
-    "step3Title": "Obtené tu resultado",
-    "step3Body": "Recibí un conjunto de resultados profesionales en segundos.",
+    "step3Title": "Obtené el resultado",
+    "step3Body": "Recibí un resultado listo para usar en segundos.",
     "step3Visual": "Listo"
   },
   "freeUsage": {
     "heading": "Probalo antes de pagar.",
-    "body": "Cada herramienta de Novalup AI incluye uso gratuito para que veas el resultado antes de comprometerte.",
+    "body": "Cada herramienta incluye créditos gratuitos para que puedas probarla y ver el resultado antes de decidir.",
     "cta": "Explorar herramientas"
   },
   "about": {
-    "heading": "Herramientas de IA pensadas para problemas reales.",
-    "body": "Novalup AI es una colección creciente de herramientas prácticas de inteligencia artificial, creadas para hacer las tareas cotidianas más rápidas, simples y accesibles."
+    "heading": "IA útil, sin complicaciones.",
+    "body": "Novalup AI reúne herramientas simples para resolver tareas concretas. Elegí lo que necesitás, probalo y obtené resultados."
   },
   "finalCta": {
-    "heading": "Encontrá una herramienta. Creá algo útil.",
-    "subheading": "Explorá Novalup AI y empezá a crear.",
+    "heading": "Encontrá la herramienta que necesitás.",
+    "subheading": "Explorá Novalup AI y empezá a resolver tareas con inteligencia artificial.",
     "cta": "Explorar herramientas"
   },
   "footer": {
@@ -124,7 +124,7 @@
     }
   },
   "metadata": {
-    "title": "Novalup AI — Herramientas de IA que realmente hacen algo",
+    "title": "Novalup AI — Herramientas de IA para resolver tareas reales",
     "description": "Herramientas prácticas de inteligencia artificial para el trabajo, la creatividad, el estudio y la vida diaria."
   }
 }

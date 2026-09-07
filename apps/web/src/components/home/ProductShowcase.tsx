@@ -83,14 +83,14 @@ function ProductPhotosApp() {
           </span>
         </div>
 
-        <div className="relative overflow-hidden rounded-xl border border-white/[0.07] bg-white">
+        <div className="relative overflow-hidden rounded-xl border border-white/[0.07] bg-night-card">
           <div className="relative aspect-[4/3] w-full">
             <Image
               src={AFTER_SRC}
               alt=""
               fill
               sizes="(min-width: 1024px) 460px, (min-width: 640px) 60vw, 90vw"
-              className="object-contain"
+              className="object-cover"
             />
           </div>
           <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-night/85 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur">
@@ -108,7 +108,7 @@ function ProductPhotosApp() {
           {RESULT_THUMBS.map((thumb, index) => (
             <span
               key={thumb.ratio}
-              className={`relative ${thumb.width} ${thumb.ratio} overflow-hidden rounded-md border bg-white ${
+              className={`relative ${thumb.width} ${thumb.ratio} overflow-hidden rounded-md border bg-night-card ${
                 index === 0 ? "border-accent/40" : "border-white/[0.08]"
               }`}
             >
@@ -117,7 +117,7 @@ function ProductPhotosApp() {
                 alt=""
                 fill
                 sizes="56px"
-                className="object-contain"
+                className="object-cover"
               />
             </span>
           ))}
