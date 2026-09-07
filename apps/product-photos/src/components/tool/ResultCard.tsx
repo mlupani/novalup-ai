@@ -16,7 +16,7 @@ export function ResultCard({
       <p className="text-sm text-neutral-400">{copy.tool.creditUsed(creditsRemaining)}</p>
       <div className="flex flex-wrap gap-3">
         <Button onClick={onAgain}>{copy.tool.generateAgain}</Button>
-        <Button variant="outline" href={`${imageUrl}?download=1`}>{copy.tool.download}</Button>
+        <Button variant="outline" href={`${imageUrl}?download=1`} download>{copy.tool.download}</Button>
         <Button variant="ghost" onClick={onAnother}>{copy.tool.createAnother}</Button>
       </div>
     </Card>

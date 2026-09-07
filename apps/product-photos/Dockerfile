@@ -42,7 +42,15 @@ RUN pnpm --filter product-photos build
 # ---- runner stage ----
 FROM base AS runner
 ENV NODE_ENV=production
-COPY --from=build /repo /repo
+
+# Run as the unprivileged `node` user shipped in the base image. It needs write
+# access to /repo (Prisma writes engine artifacts, Next writes its cache) and to
+# the /data media volume mount point (a fresh named volume inherits this dir's
+# ownership on first mount).
+COPY --from=build --chown=node:node /repo /repo
+RUN mkdir -p /data && chown node:node /data
+USER node
+
 WORKDIR /repo/apps/product-photos
 EXPOSE 3000
 

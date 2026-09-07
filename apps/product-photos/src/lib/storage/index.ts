@@ -28,6 +28,9 @@ export async function readMedia(
   generationId: string,
   kind: "original" | "generated",
 ): Promise<{ data: Buffer; contentType: string } | null> {
+  // Defense in depth: `generationId` reaches `join(root, key)` — reject anything
+  // that is not a bare cuid so a crafted id can never traverse out of the root.
+  if (!/^[a-z0-9]+$/i.test(generationId)) return null;
   for (const ext of EXT_BY_KIND[kind]) {
     try {
       return await storage.read(mediaKey(generationId, kind, ext));

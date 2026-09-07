@@ -40,6 +40,7 @@ const copy = {
     backgrounds: { clean: "Clean", premium: "Premium", natural: "Natural", custom: "Custom" },
     generate: "Generar foto",
     generating: "Creando tu foto de producto…",
+    userMenuLabel: "Menú de usuario",
     resultTitle: "Tu foto de producto",
     generateAgain: "Generar de nuevo",
     download: "Descargar",

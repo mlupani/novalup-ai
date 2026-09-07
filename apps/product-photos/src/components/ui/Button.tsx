@@ -18,9 +18,19 @@ export function Button({
   size = "md",
   className,
   href,
+  download,
   ...props
-}: Common & (React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: string })) {
+}: Common & (React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: string; download?: boolean })) {
   const cls = cn(styles.base, styles.size[size], styles.variant[variant], className);
-  if (href) return <Link href={href} className={cls}>{props.children}</Link>;
+  if (href) {
+    // `next/link` prefetches every href — fine for page routes, wasteful for an
+    // API endpoint (it would pull the whole generated image). Route those, and
+    // any absolute URL, through a plain <a>.
+    const isExternal = href.startsWith("/api/") || href.includes("://");
+    if (isExternal) {
+      return <a href={href} download={download} className={cls}>{props.children}</a>;
+    }
+    return <Link href={href} className={cls}>{props.children}</Link>;
+  }
   return <button className={cls} {...props} />;
 }

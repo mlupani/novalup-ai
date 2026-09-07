@@ -1,16 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import copy from "@/content/copy";
 
 export function UserMenu({ name, email }: { name: string | null; email: string }) {
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const initial = (name ?? email).charAt(0).toUpperCase();
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: PointerEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={rootRef}>
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/20 text-sm font-semibold text-white"
+        aria-label={copy.tool.userMenuLabel}
         aria-haspopup="menu"
         aria-expanded={open}
       >

@@ -40,6 +40,13 @@ describe("POST /api/auth/signup", () => {
     const res = await POST(req(valid));
     expect(res.status).toBe(409);
   });
+  it("maps a P2002 unique-constraint race on create to 409", async () => {
+    findUnique.mockResolvedValue(null);
+    create.mockRejectedValue({ code: "P2002" });
+    const res = await POST(req(valid));
+    expect(res.status).toBe(409);
+    expect(await res.json()).toEqual({ error: "email_taken" });
+  });
   it("rejects mismatched passwords with 422", async () => {
     const res = await POST(req({ ...valid, confirmPassword: "99999999" }));
     expect(res.status).toBe(422);

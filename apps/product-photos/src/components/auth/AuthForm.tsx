@@ -69,11 +69,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         <input id="password" name="password" type="password" required minLength={mode === "signup" ? 8 : 1} className={inputClass} />
       </Field>
       {mode === "signup" && (
-        <Field label={copy.auth.confirmPassword} htmlFor="confirmPassword" error={error ?? undefined}>
+        <Field label={copy.auth.confirmPassword} htmlFor="confirmPassword">
           <input id="confirmPassword" name="confirmPassword" type="password" required minLength={8} className={inputClass} />
         </Field>
       )}
-      {mode === "login" && error ? <p className="text-sm text-accent-light">{error}</p> : null}
+      {error ? <p className="text-sm text-accent-light">{error}</p> : null}
       <Button type="submit" disabled={pending} className="w-full">
         {mode === "login" ? copy.auth.submitLogin : copy.auth.submitSignup}
       </Button>

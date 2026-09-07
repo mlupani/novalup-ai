@@ -3,7 +3,7 @@ import brandPreset from "@novalup/brand/tailwind-preset";
 
 const config: Config = {
   presets: [brandPreset],
-  content: ["./src/**/*.{ts,tsx}"],
+  content: ["./src/{app,components,content,hooks,lib}/**/*.{ts,tsx}"],
   plugins: [],
 };
 
