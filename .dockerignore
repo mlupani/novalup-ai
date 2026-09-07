@@ -1,0 +1,34 @@
+# Build context is the repo root (docker-compose.yml: `context: .`, and
+# `docker build -f apps/product-photos/Dockerfile .`). Docker only reads a
+# .dockerignore from the context root, so it lives here rather than next to the
+# Dockerfile. Patterns are therefore repo-root-relative.
+
+# Dependencies + build output — reinstalled / rebuilt inside the image.
+**/node_modules
+**/.next
+**/out
+**/build
+**/.turbo
+
+# Generated Prisma client — regenerated in the build stage.
+apps/product-photos/src/generated
+
+# Local upload/generation storage (STORAGE_DIR fallback for `pnpm dev`).
+apps/product-photos/.data
+
+# Secrets and local env — the image gets its env from docker-compose.
+**/.env
+**/.env.*.local
+
+# Logs, VCS, editor, OS cruft.
+**/*.log
+.git
+.gitignore
+.github
+**/.DS_Store
+**/*.pem
+
+# Not needed to build the product-photos app.
+apps/web
+docs
+.superpowers
