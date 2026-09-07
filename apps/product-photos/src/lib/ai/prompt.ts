@@ -1,7 +1,7 @@
 import type { StyleId, BackgroundId } from "@/lib/ai/options";
 
 const BASE = [
-  "Create a professional commercial product photograph from the provided product image.",
+  "Create a professional commercial product photograph from the provided product image(s).",
   "Preserve the exact product identity. Preserve its shape, proportions, colors, branding, labels and packaging.",
   "Do not invent, add, or modify important product details.",
   "Make the product the clear visual focus. Use realistic lighting, realistic shadows, and natural materials.",
