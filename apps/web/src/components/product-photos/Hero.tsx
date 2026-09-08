@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { PRODUCT_PHOTOS_URL } from "@/lib/constants";
+import { ComingSoonBadge } from "./ComingSoonBadge";
 
 export function Hero() {
   const t = useTranslations("productPhotos.hero");
@@ -21,6 +22,7 @@ export function Hero() {
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent-light">
             {t("eyebrow")}
           </span>
+          <ComingSoonBadge />
           <h1 className="text-[2.5rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
             {t("headline")}
           </h1>

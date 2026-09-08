@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { HeroBackground } from "@/components/ui/HeroBackground";
 import { BeforeAfter } from "@/components/landing/BeforeAfter";
+import { ComingSoonBadge } from "@/components/landing/ComingSoonBadge";
 import { FREE_CREDITS } from "@/lib/credits/config";
 import copy from "@/content/copy";
 
@@ -24,6 +25,7 @@ export function LandingHero() {
             {copy.landing.headline}
           </h1>
           <p className="max-w-xl text-lg text-neutral-300 drop-shadow-md">{copy.landing.subheadline}</p>
+          <ComingSoonBadge />
           <div className="flex flex-col items-center gap-3 sm:flex-row">
             <Button href="/signup" size="lg">{copy.landing.ctaFree(FREE_CREDITS)}</Button>
             <Button href="/login" size="lg" variant="outline">{copy.landing.login}</Button>
