@@ -12,6 +12,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t("items.interview-simulator.name"),
     alternates: buildAlternates("/interview", locale),
+    // Coming-soon placeholder — keep it out of the index until it ships.
+    robots: { index: false, follow: true },
   };
 }
 

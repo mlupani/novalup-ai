@@ -12,6 +12,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t("items.trading-analytics.name"),
     alternates: buildAlternates("/trading", locale),
+    // Coming-soon placeholder — keep it out of the index until it ships.
+    robots: { index: false, follow: true },
   };
 }
 

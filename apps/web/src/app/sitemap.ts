@@ -1,13 +1,11 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/constants";
 
+// Coming-soon tool pages (/cv, /study, /interview, /trading) are noindex and
+// intentionally omitted until they ship — see their generateMetadata.
 const PATHS = [
   "/",
   "/product-photos",
-  "/cv",
-  "/study",
-  "/interview",
-  "/trading",
   "/terms",
   "/privacy",
   "/contact",

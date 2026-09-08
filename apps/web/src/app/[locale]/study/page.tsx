@@ -12,6 +12,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t("items.study-assistant.name"),
     alternates: buildAlternates("/study", locale),
+    // Coming-soon placeholder — keep it out of the index until it ships.
+    robots: { index: false, follow: true },
   };
 }
 
