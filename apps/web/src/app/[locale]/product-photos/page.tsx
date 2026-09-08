@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: t("items.product-photos.name"),
-    alternates: buildAlternates("/product-photos"),
+    alternates: buildAlternates("/product-photos", locale),
   };
 }
 

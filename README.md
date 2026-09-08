@@ -64,6 +64,20 @@ set `TRAEFIK_NETWORK` to it and flip `web` to `external: true` in the compose fi
    Regenerate `NEXTAUTH_SECRET` (`openssl rand -base64 32`) and set a strong
    `POSTGRES_PASSWORD`. `.env.production` is gitignored — it lives only on the server.
 
+### SEO / Analytics (apps/web)
+
+- **Google Search Console:** add a **Domain property** for `novaluptech.com`
+  (covers every subdomain, incl. `ai.` and `photos.`). Verify by adding the
+  `google-site-verification=…` **TXT record** it gives you to the DNS zone —
+  no code or redeploy. Then submit `https://ai.novaluptech.com/sitemap.xml`.
+- **Google Analytics 4:** create a GA4 property (or a new web data stream on an
+  existing one) for `ai.novaluptech.com`, then put its Measurement ID in
+  `NEXT_PUBLIC_GA_ID` in `.env.production` and redeploy with `--build`. Blank =
+  Analytics not loaded. Link the GA4 property to the Search Console property
+  under GA4 Admin → Product links.
+- `NEXT_PUBLIC_SITE_URL` (default `https://ai.novaluptech.com`) drives canonicals,
+  `sitemap.xml`, `robots.txt` and OG URLs.
+
 ### Deploy / redeploy
 
 ```bash

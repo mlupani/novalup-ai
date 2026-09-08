@@ -3,9 +3,10 @@ import { Inter } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { routing } from "@/i18n/routing";
 import { buildAlternates } from "@/lib/seo";
-import { SITE_URL } from "@/lib/constants";
+import { SITE_URL, GA_ID } from "@/lib/constants";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import "../globals.css";
@@ -36,7 +37,7 @@ export async function generateMetadata({
       template: "%s — Novalup AI",
     },
     description: t("description"),
-    alternates: buildAlternates("/"),
+    alternates: buildAlternates("/", locale),
     openGraph: {
       title: t("title"),
       description: t("description"),
@@ -73,6 +74,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <Footer />
         </NextIntlClientProvider>
       </body>
+      {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>
   );
 }

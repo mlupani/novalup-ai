@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: t("items.interview-simulator.name"),
-    alternates: buildAlternates("/interview"),
+    alternates: buildAlternates("/interview", locale),
   };
 }
 

@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: t("items.cv-analyzer.name"),
-    alternates: buildAlternates("/cv"),
+    alternates: buildAlternates("/cv", locale),
   };
 }
 

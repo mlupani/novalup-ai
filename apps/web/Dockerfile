@@ -5,7 +5,9 @@
 # To build by hand:
 #
 #   docker build -f apps/web/Dockerfile \
+#     --build-arg NEXT_PUBLIC_SITE_URL=https://ai.novaluptech.com \
 #     --build-arg NEXT_PUBLIC_PRODUCT_PHOTOS_URL=https://photos.novaluptech.com \
+#     --build-arg NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX \
 #     -t novalup-web .
 #
 # Like apps/product-photos/Dockerfile, the image keeps the full node_modules
@@ -21,11 +23,15 @@ WORKDIR /repo
 # ---- build stage: install workspace deps, next build ----
 FROM base AS build
 
-# NEXT_PUBLIC_* vars are inlined into the client bundle at build time, so the
-# public URL of the Product Photos app has to be known HERE, not at runtime.
-# docker-compose.prod.yml passes it through as a build arg.
+# NEXT_PUBLIC_* vars are inlined into the client bundle at build time, so they
+# have to be known HERE, not at runtime. docker-compose.prod.yml passes them
+# through as build args.
+ARG NEXT_PUBLIC_SITE_URL=https://ai.novaluptech.com
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_PRODUCT_PHOTOS_URL=http://localhost:3000
 ENV NEXT_PUBLIC_PRODUCT_PHOTOS_URL=$NEXT_PUBLIC_PRODUCT_PHOTOS_URL
+ARG NEXT_PUBLIC_GA_ID=
+ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
 
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml tsconfig.base.json ./
 COPY packages ./packages

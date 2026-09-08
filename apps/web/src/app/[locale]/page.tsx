@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { buildAlternates } from "@/lib/seo";
+import { buildAlternates, siteJsonLd } from "@/lib/seo";
 import { Hero } from "@/components/home/Hero";
 import { StatementStrip } from "@/components/home/StatementStrip";
 import { ProductGrid } from "@/components/home/ProductGrid";
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: t("title"),
     description: t("description"),
-    alternates: buildAlternates("/"),
+    alternates: buildAlternates("/", locale),
   };
 }
 
@@ -29,6 +29,10 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }}
+      />
       <Hero />
       <StatementStrip />
       <ProductGrid />

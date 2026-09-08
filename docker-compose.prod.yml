@@ -103,7 +103,10 @@ services:
       dockerfile: apps/web/Dockerfile
       args:
         # Inlined into the web bundle at build time (see apps/web/Dockerfile).
+        # After changing any of these, redeploy with --build.
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://ai.novaluptech.com}
         NEXT_PUBLIC_PRODUCT_PHOTOS_URL: ${NEXT_PUBLIC_PRODUCT_PHOTOS_URL:-https://photos.novaluptech.com}
+        NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
     restart: unless-stopped
     networks:
       - web
