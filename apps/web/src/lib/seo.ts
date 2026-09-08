@@ -1,4 +1,4 @@
-import { SITE_URL } from "@/lib/constants";
+import { SITE_URL, PRODUCT_PHOTOS_URL } from "@/lib/constants";
 
 /**
  * Per-page `alternates` for Next metadata. Paths are relative — Next resolves
@@ -46,5 +46,37 @@ export function siteJsonLd(locale: string) {
         inLanguage: locale === "en" ? "en-US" : "es-AR",
       },
     ],
+  };
+}
+
+/**
+ * schema.org SoftwareApplication for the Product Photos tool. `offers` is a
+ * free tier, so price is "0".
+ */
+export function productPhotosJsonLd(locale: string, name: string, description: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name,
+    description,
+    url: PRODUCT_PHOTOS_URL,
+    applicationCategory: "MultimediaApplication",
+    operatingSystem: "Web",
+    inLanguage: locale === "en" ? "en-US" : "es-AR",
+    publisher: { "@type": "Organization", name: "Novalup AI", url: SITE_URL },
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  };
+}
+
+/** schema.org FAQPage from a list of question/answer pairs. */
+export function faqJsonLd(items: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
   };
 }

@@ -126,5 +126,67 @@
   "metadata": {
     "title": "Novalup AI — Herramientas de IA para resolver tareas reales",
     "description": "Herramientas prácticas de inteligencia artificial para el trabajo, la creatividad, el estudio y la vida diaria."
+  },
+  "productPhotos": {
+    "meta": {
+      "title": "Foto de Producto con IA",
+      "description": "Convertí una foto común de tu producto en imágenes de marketing profesionales con IA. Elegí formato, estilo y fondo y generá en segundos. 10 imágenes gratis, sin tarjeta."
+    },
+    "hero": {
+      "eyebrow": "Foto de Producto con IA",
+      "headline": "Fotos de producto profesionales, generadas con IA en segundos.",
+      "subheadline": "Subí una foto común de tu producto y obtené imágenes listas para tu tienda, tus redes y tus campañas. Sin estudio, sin fotógrafo, sin editar.",
+      "cta": "Probar gratis",
+      "note": "10 imágenes gratis · sin tarjeta",
+      "beforeLabel": "Tu foto",
+      "afterLabel": "Generada con IA"
+    },
+    "steps": {
+      "heading": "Cómo funciona",
+      "subheading": "Tres pasos. De una foto casera a una imagen de marketing.",
+      "step1Title": "Subí tu producto",
+      "step1Body": "Una foto sacada con el celular alcanza. JPG, PNG o WEBP, hasta 10 MB.",
+      "step2Title": "Elegí formato, estilo y fondo",
+      "step2Body": "Cuadrado para el feed, vertical para historias. Estudio, estilo de vida, lujo y más.",
+      "step3Title": "Generá y descargá",
+      "step3Body": "En segundos tenés tu imagen en alta resolución, lista para publicar."
+    },
+    "styles": {
+      "heading": "Un estilo para cada canal",
+      "subheading": "Cada estilo cambia la luz, el encuadre y el ambiente de la escena.",
+      "studioName": "Estudio",
+      "studioBody": "Fondo uniforme y luz pareja controlada. El clásico para e-commerce y catálogo.",
+      "lifestyleName": "Estilo de vida",
+      "lifestyleBody": "El producto en un entorno real, con luz natural suave. Muestra cómo se ve en el día a día.",
+      "luxuryName": "Lujo",
+      "luxuryBody": "Estética editorial premium: composición elegante, luz dramática y aire de revista.",
+      "minimalName": "Minimalista",
+      "minimalBody": "Composición despejada, mucho espacio vacío y una paleta sobria.",
+      "socialName": "Redes sociales",
+      "socialBody": "Encuadre llamativo y de alto contraste, pensado para frenar el scroll."
+    },
+    "free": {
+      "heading": "Probalo gratis, sin tarjeta",
+      "body": "Al crear tu cuenta tenés 10 imágenes gratis para probar todos los estilos y formatos. Sin suscripción y sin datos de pago.",
+      "cta": "Empezar ahora"
+    },
+    "faq": {
+      "heading": "Preguntas frecuentes",
+      "q1": "¿Qué formatos puedo generar?",
+      "a1": "Cuadrado (1:1), retrato (4:5), vertical (9:16) y horizontal (16:9). Cubren feed de Instagram, historias, Reels y TikTok, web y banners.",
+      "q2": "¿Sirve para cualquier producto?",
+      "a2": "Funciona mejor con productos físicos que se ven claros en la foto: indumentaria, accesorios, electrónica, cosmética, alimentos envasados, decoración. Cuanto mejor la foto original, mejor el resultado.",
+      "q3": "¿Puedo usar las imágenes comercialmente?",
+      "a3": "Sí. Las imágenes que generás son tuyas para usar en tu tienda, redes, publicidad y catálogos.",
+      "q4": "¿Qué calidad tienen las imágenes?",
+      "a4": "Se generan en alta resolución (2K), listas para publicar en web y redes sin editar.",
+      "q5": "¿Cómo funcionan los créditos?",
+      "a5": "Cada imagen usa 1 crédito y al crear tu cuenta recibís 10 gratis. Podés generar varias imágenes de una sola vez en distintos estilos."
+    },
+    "cta": {
+      "heading": "Convertí tu próxima foto en una imagen que vende.",
+      "subheading": "Subí un producto y generá tu primera imagen gratis.",
+      "button": "Probar Foto de Producto"
+    }
   }
 }

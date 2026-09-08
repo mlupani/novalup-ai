@@ -126,5 +126,67 @@
   "metadata": {
     "title": "Novalup AI — AI Tools to Solve Real Tasks",
     "description": "Practical AI tools for work, creativity, learning and everyday tasks."
+  },
+  "productPhotos": {
+    "meta": {
+      "title": "AI Product Photos",
+      "description": "Turn a plain photo of your product into professional marketing images with AI. Pick a format, style and background and generate in seconds. 10 free images, no card."
+    },
+    "hero": {
+      "eyebrow": "AI Product Photos",
+      "headline": "Professional product photos, generated with AI in seconds.",
+      "subheadline": "Upload a plain photo of your product and get images ready for your store, your social media and your campaigns. No studio, no photographer, no editing.",
+      "cta": "Try it free",
+      "note": "10 free images · no card",
+      "beforeLabel": "Your photo",
+      "afterLabel": "AI generated"
+    },
+    "steps": {
+      "heading": "How it works",
+      "subheading": "Three steps. From a casual photo to a marketing image.",
+      "step1Title": "Upload your product",
+      "step1Body": "A phone photo is enough. JPG, PNG or WEBP, up to 10 MB.",
+      "step2Title": "Pick a format, style and background",
+      "step2Body": "Square for the feed, vertical for stories. Studio, lifestyle, luxury and more.",
+      "step3Title": "Generate and download",
+      "step3Body": "In seconds you get your image in high resolution, ready to publish."
+    },
+    "styles": {
+      "heading": "A style for every channel",
+      "subheading": "Each style changes the lighting, framing and mood of the scene.",
+      "studioName": "Studio",
+      "studioBody": "Even background and controlled, uniform light. The classic for e-commerce and catalogs.",
+      "lifestyleName": "Lifestyle",
+      "lifestyleBody": "The product in a real setting with soft natural light. Shows how it looks day to day.",
+      "luxuryName": "Luxury",
+      "luxuryBody": "Premium editorial look: elegant composition, dramatic light, a magazine feel.",
+      "minimalName": "Minimal",
+      "minimalBody": "Clean, uncluttered composition with lots of empty space and a restrained palette.",
+      "socialName": "Social media",
+      "socialBody": "Bold, high-contrast framing built to stop the scroll."
+    },
+    "free": {
+      "heading": "Try it free, no card",
+      "body": "When you create your account you get 10 free images to try every style and format. No subscription and no payment details.",
+      "cta": "Get started"
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "q1": "What formats can I generate?",
+      "a1": "Square (1:1), portrait (4:5), vertical (9:16) and landscape (16:9). They cover the Instagram feed, stories, Reels and TikTok, web and banners.",
+      "q2": "Does it work for any product?",
+      "a2": "It works best with physical products that read clearly in the photo: apparel, accessories, electronics, cosmetics, packaged food, home decor. The better the original photo, the better the result.",
+      "q3": "Can I use the images commercially?",
+      "a3": "Yes. The images you generate are yours to use in your store, social media, ads and catalogs.",
+      "q4": "What quality are the images?",
+      "a4": "They are generated in high resolution (2K), ready to publish on web and social without editing.",
+      "q5": "How do credits work?",
+      "a5": "Each image uses 1 credit and you get 10 free when you create your account. You can generate several images at once in different styles."
+    },
+    "cta": {
+      "heading": "Turn your next photo into an image that sells.",
+      "subheading": "Upload a product and generate your first image for free.",
+      "button": "Try Product Photos"
+    }
   }
 }
