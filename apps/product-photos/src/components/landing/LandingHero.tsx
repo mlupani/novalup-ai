@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { HeroBackground } from "@/components/ui/HeroBackground";
-import { BeforeAfter } from "@/components/landing/BeforeAfter";
+import { BeforeAfterGrid } from "@/components/landing/BeforeAfter";
 import { ComingSoonBadge } from "@/components/landing/ComingSoonBadge";
 import { FREE_CREDITS } from "@/lib/credits/config";
 import copy from "@/content/copy";
@@ -34,7 +34,7 @@ export function LandingHero() {
       </section>
 
       <section className="mx-auto w-full max-w-5xl px-6 pb-20 pt-2">
-        <BeforeAfter />
+        <BeforeAfterGrid />
       </section>
     </main>
   );
