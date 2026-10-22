@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { BASE_PATH } from "@/lib/base-path";
 
 /**
  * Full-bleed animated backdrop shared by the landing and the auth pages.
@@ -11,7 +12,7 @@ export function HeroBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <Image
-        src="/images/fondo.png"
+        src={`${BASE_PATH}/images/fondo.png`}
         alt=""
         fill
         priority

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import copy from "@/content/copy";
+import { BASE_PATH } from "@/lib/base-path";
 
 const badgeClass =
   "absolute bottom-3 rounded-full bg-night/80 px-3 py-1 text-sm font-medium text-white shadow-lg backdrop-blur-sm";
@@ -10,9 +11,9 @@ const badgeClass =
  * fill it. The first pair drives LCP and loads with priority.
  */
 const pairs = [
-  { before: "/images/demo/before_1.webp", after: "/images/demo/after_1.png" },
-  { before: "/images/demo/before_2.webp", after: "/images/demo/after_2.png" },
-  { before: "/images/demo/before_3.jpg", after: "/images/demo/after_3.png" },
+  { before: `${BASE_PATH}/images/demo/before_1.webp`, after: `${BASE_PATH}/images/demo/after_1.png` },
+  { before: `${BASE_PATH}/images/demo/before_2.webp`, after: `${BASE_PATH}/images/demo/after_2.png` },
+  { before: `${BASE_PATH}/images/demo/before_3.jpg`, after: `${BASE_PATH}/images/demo/after_3.png` },
 ];
 
 /**
