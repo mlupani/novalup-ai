@@ -47,6 +47,18 @@ services:
       - internal
       - dokploy-network
 
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://ai.novaluptech.com}
+        NEXT_PUBLIC_PRODUCT_PHOTOS_URL: ${NEXT_PUBLIC_PRODUCT_PHOTOS_URL:-https://ai.novaluptech.com/product-photos}
+        NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
+    restart: unless-stopped
+    networks:
+      - dokploy-network
+
 networks:
   internal:
   dokploy-network:
