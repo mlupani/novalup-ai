@@ -2,6 +2,7 @@
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import copy from "@/content/copy";
+import { BASE_PATH } from "@/lib/base-path";
 
 /** Google's "G" mark, inlined so the button needs no external request. */
 function GoogleMark() {
@@ -33,7 +34,7 @@ export function GoogleButton() {
       type="button"
       variant="outline"
       className="w-full gap-3"
-      onClick={() => signIn("google", { callbackUrl: "/app" })}
+      onClick={() => signIn("google", { callbackUrl: `${BASE_PATH}/app` })}
     >
       <GoogleMark />
       {copy.auth.google}

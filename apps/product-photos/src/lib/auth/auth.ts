@@ -6,6 +6,7 @@ import { prisma } from "@/lib/db/client";
 import { verifyPassword } from "@/lib/auth/password";
 import { grantFreeCredits } from "@/lib/credits/service";
 import { loginSchema } from "@/lib/validation/schemas";
+import { AUTH_BASE_PATH, BASE_PATH } from "@/lib/base-path";
 
 // `@auth/prisma-adapter` types its argument as `PrismaClient` from the legacy
 // `@prisma/client`, which is not populated under Prisma 7's `prisma-client`
@@ -18,7 +19,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter,
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
-  pages: { signIn: "/login" },
+  basePath: AUTH_BASE_PATH,
+  pages: { signIn: `${BASE_PATH}/login` },
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",

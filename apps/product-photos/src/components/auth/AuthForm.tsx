@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { Field, inputClass } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import copy from "@/content/copy";
+import { BASE_PATH } from "@/lib/base-path";
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
   const router = useRouter();
@@ -25,7 +26,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           setPending(false);
           return;
         }
-        const res = await fetch("/api/auth/signup", {
+        const res = await fetch(`${BASE_PATH}/api/auth/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name: data.get("name"), email, password, confirmPassword: data.get("confirmPassword") }),

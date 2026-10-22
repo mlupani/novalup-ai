@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import copy from "@/content/copy";
+import { BASE_PATH } from "@/lib/base-path";
 
 export type PhotoStatus =
   | { id: string; status: "pending" }
@@ -90,7 +91,7 @@ export function useBatchGeneration(opts?: { pollIntervalMs?: number; maxPollAtte
         const results = await Promise.all(
           pending.map(async (p) => {
             try {
-              const res = await fetch(`/api/generations/${p.id}`);
+              const res = await fetch(`${BASE_PATH}/api/generations/${p.id}`);
               if (!res.ok) return null;
               return { id: p.id, body: (await res.json()) as Record<string, unknown> };
             } catch {
@@ -147,7 +148,7 @@ export function useBatchGeneration(opts?: { pollIntervalMs?: number; maxPollAtte
 
       let res: Response;
       try {
-        res = await fetch("/api/generations", { method: "POST", body: form });
+        res = await fetch(`${BASE_PATH}/api/generations`, { method: "POST", body: form });
       } catch {
         setError(copy.errors.generic);
         setState("failed");

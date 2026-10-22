@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import copy from "@/content/copy";
+import { BASE_PATH } from "@/lib/base-path";
 
 export function UserMenu({
   name,
@@ -57,7 +58,7 @@ export function UserMenu({
             </button>
           )}
           <button
-            onClick={() => { setOpen(false); signOut({ callbackUrl: "/" }); }}
+            onClick={() => { setOpen(false); signOut({ callbackUrl: BASE_PATH }); }}
             className="mt-3 w-full rounded-lg px-3 py-2 text-left text-neutral-300 hover:bg-white/[0.06]"
             role="menuitem"
           >

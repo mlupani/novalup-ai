@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Field, inputClass } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import copy from "@/content/copy";
+import { BASE_PATH } from "@/lib/base-path";
 
 export function FeedbackForm() {
   const [done, setDone] = useState(false);
@@ -26,7 +27,7 @@ export function FeedbackForm() {
 
     let res: Response;
     try {
-      res = await fetch("/api/feedback", {
+      res = await fetch(`${BASE_PATH}/api/feedback`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),

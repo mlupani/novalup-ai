@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/client";
 import { AppClient } from "./page";
+import { BASE_PATH } from "@/lib/base-path";
 
 export default async function AppLayout() {
   const sessionUser = await requireUser();
@@ -11,7 +12,7 @@ export default async function AppLayout() {
     where: { id: sessionUser.id },
     select: { name: true, email: true, credits: true },
   });
-  if (!user) redirect("/api/auth/signout?callbackUrl=/login");
+  if (!user) redirect(`/api/auth/signout?callbackUrl=${BASE_PATH}/login`);
 
   return (
     <>

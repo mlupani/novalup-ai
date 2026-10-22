@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { toDownloadUrl } from "@/lib/storage/download";
 import copy from "@/content/copy";
+import { BASE_PATH } from "@/lib/base-path";
 
 interface Generation {
   id: string;
@@ -24,7 +25,7 @@ export function CreationsPanel({ onBack }: { onBack: () => void }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/generations")
+    fetch(`${BASE_PATH}/api/generations`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.generations) {

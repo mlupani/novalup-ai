@@ -8,15 +8,23 @@ const SESSION_COOKIES = [
   "__Secure-next-auth.session-token",
 ];
 
+// nextUrl.clone() keeps the basePath, unlike `new URL("/x", req.url)`.
+function redirectTo(req: NextRequest, pathname: string) {
+  const url = req.nextUrl.clone();
+  url.pathname = pathname;
+  url.search = "";
+  return NextResponse.redirect(url);
+}
+
 export function middleware(req: NextRequest) {
   const hasSession = SESSION_COOKIES.some((c) => req.cookies.has(c));
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith("/app") && !hasSession) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return redirectTo(req, "/login");
   }
   if (hasSession && ["/", "/login", "/signup"].includes(pathname)) {
-    return NextResponse.redirect(new URL("/app", req.url));
+    return redirectTo(req, "/app");
   }
   return NextResponse.next();
 }
