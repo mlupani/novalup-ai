@@ -1,63 +1,21 @@
-# Novalup AI — production stack, fronted by an EXISTING Traefik on the host.
-#
-# This host's Traefik runs in `network_mode: host`, so it is on no user-defined
-# Docker network. It reaches these containers by their IP on the `web` bridge
-# network defined below — the host routes to it — and the
-# `traefik.docker.network=novalup-prod-web` label tells Traefik which network to
-# dial. Nothing to pre-create.
-#
-#   If your Traefik instead SHARES a user-defined network with its backends,
-#   set that network's name as TRAEFIK_NETWORK in .env.production and flip the
-#   `web` network below to `external: true`.
-#
-# Also assumed on that Traefik: a "websecure" (443) entrypoint, a "letsencrypt"
-# certresolver, and a global :80 -> :443 redirect.
-#
-# The "letsencrypt" resolver uses the ACME HTTP-01 challenge, so the DNS A
-# records for ai.novaluptech.com and photos.novaluptech.com MUST already point
-# at this host before the first deploy or cert issuance fails (and backs off).
-#
-# Deploy / redeploy:
-#   git pull
-#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
-#
-# Routing:
-#   ai.novaluptech.com     -> web            (marketing site, :3100)
-#   photos.novaluptech.com -> product-photos (the app, :3000) + its Postgres
-#
-# Postgres runs on a private network with no host port. Back it up with a
-# pg_dump cron against the container (see README).
-
-name: novalup-prod
-
-networks:
-  # Bridge that host-mode Traefik dials by container IP. For a shared-network
-  # Traefik instead: set TRAEFIK_NETWORK and add `external: true` here.
-  web:
-    name: ${TRAEFIK_NETWORK:-novalup-prod-web}
-  internal:
-    name: novalup-prod-internal
-
-volumes:
-  pgdata:
-
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_USER: ${POSTGRES_USER:-novalup}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_DB:-product_photos}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-novalup} -d ${POSTGRES_DB:-product_photos}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
     networks:
       - internal
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
   product-photos:
     build:
@@ -68,10 +26,9 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      # Compose network host is "postgres"; assembled from the POSTGRES_* vars.
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-novalup}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-product_photos}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-https://photos.novaluptech.com}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
       AUTH_TRUST_HOST: "true"
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
@@ -87,33 +44,13 @@ services:
       FREE_CREDITS: ${FREE_CREDITS:-3}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
     networks:
-      - web
       - internal
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=${TRAEFIK_NETWORK:-novalup-prod-web}
-      - traefik.http.routers.novalup-photos.rule=Host(`photos.novaluptech.com`)
-      - traefik.http.routers.novalup-photos.entrypoints=websecure
-      - traefik.http.routers.novalup-photos.tls.certresolver=letsencrypt
-      - traefik.http.services.novalup-photos.loadbalancer.server.port=3000
+      - dokploy-network
 
-  web:
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
-      args:
-        # Inlined into the web bundle at build time (see apps/web/Dockerfile).
-        # After changing any of these, redeploy with --build.
-        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://ai.novaluptech.com}
-        NEXT_PUBLIC_PRODUCT_PHOTOS_URL: ${NEXT_PUBLIC_PRODUCT_PHOTOS_URL:-https://photos.novaluptech.com}
-        NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
-    restart: unless-stopped
-    networks:
-      - web
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=${TRAEFIK_NETWORK:-novalup-prod-web}
-      - traefik.http.routers.novalup-web.rule=Host(`ai.novaluptech.com`)
-      - traefik.http.routers.novalup-web.entrypoints=websecure
-      - traefik.http.routers.novalup-web.tls.certresolver=letsencrypt
-      - traefik.http.services.novalup-web.loadbalancer.server.port=3100
+networks:
+  internal:
+  dokploy-network:
+    external: true
+
+volumes:
+  pgdata: {}
